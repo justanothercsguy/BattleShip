@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C40B7061C88F06700211735 /* Pods in Sources */ = {isa = PBXBuildFile; fileRef = 1C40B7051C88F06700211735 /* Pods */; };
 		7AAEAFCA1C88E0BD0007C971 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AAEAFC91C88E0BD0007C971 /* AppDelegate.swift */; };
 		7AAEAFCC1C88E0BD0007C971 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AAEAFCB1C88E0BD0007C971 /* ViewController.swift */; };
 		7AAEAFCF1C88E0BD0007C971 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7AAEAFCD1C88E0BD0007C971 /* Main.storyboard */; };
@@ -15,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1C40B7051C88F06700211735 /* Pods */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Pods; sourceTree = "<group>"; };
 		7AAEAFC61C88E0BD0007C971 /* BattleShip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BattleShip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7AAEAFC91C88E0BD0007C971 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AAEAFCB1C88E0BD0007C971 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -38,6 +40,7 @@
 		7AAEAFBD1C88E0BD0007C971 = {
 			isa = PBXGroup;
 			children = (
+				1C40B7051C88F06700211735 /* Pods */,
 				7AAEAFC81C88E0BD0007C971 /* BattleShip */,
 				7AAEAFC71C88E0BD0007C971 /* Products */,
 			);
@@ -136,6 +139,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1C40B7061C88F06700211735 /* Pods in Sources */,
 				7AAEAFCC1C88E0BD0007C971 /* ViewController.swift in Sources */,
 				7AAEAFCA1C88E0BD0007C971 /* AppDelegate.swift in Sources */,
 			);
@@ -287,6 +291,7 @@
 				7AAEAFDA1C88E0BD0007C971 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
