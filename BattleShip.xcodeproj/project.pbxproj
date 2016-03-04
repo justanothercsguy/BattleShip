@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1C40B7061C88F06700211735 /* Pods in Sources */ = {isa = PBXBuildFile; fileRef = 1C40B7051C88F06700211735 /* Pods */; };
+		7A30FB901C8929DC00608D4F /* SocketIOClientSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A30FB8D1C89294F00608D4F /* SocketIOClientSwift.framework */; };
+		7A30FB911C8929DC00608D4F /* SocketIOClientSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7A30FB8D1C89294F00608D4F /* SocketIOClientSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7AAEAFCA1C88E0BD0007C971 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AAEAFC91C88E0BD0007C971 /* AppDelegate.swift */; };
 		7AAEAFCC1C88E0BD0007C971 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AAEAFCB1C88E0BD0007C971 /* ViewController.swift */; };
 		7AAEAFCF1C88E0BD0007C971 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7AAEAFCD1C88E0BD0007C971 /* Main.storyboard */; };
@@ -15,8 +16,53 @@
 		7AAEAFD41C88E0BD0007C971 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7AAEAFD21C88E0BD0007C971 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		7A30FB8A1C89294F00608D4F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A30FB851C89294F00608D4F /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 24B5A12F40A421CC64A9EFF354A6E477;
+			remoteInfo = Pods;
+		};
+		7A30FB8C1C89294F00608D4F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A30FB851C89294F00608D4F /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4194C11C1C3E5C279374B2A53558F098;
+			remoteInfo = "Socket.IO-Client-Swift";
+		};
+		7A30FB8E1C89297200608D4F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A30FB851C89294F00608D4F /* Pods.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A787C50BB638F76ED0EE6AED918E9110;
+			remoteInfo = "Socket.IO-Client-Swift";
+		};
+		7A30FB921C8929DC00608D4F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A30FB851C89294F00608D4F /* Pods.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A787C50BB638F76ED0EE6AED918E9110;
+			remoteInfo = "Socket.IO-Client-Swift";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7A30FB941C8929DD00608D4F /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				7A30FB911C8929DC00608D4F /* SocketIOClientSwift.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		1C40B7051C88F06700211735 /* Pods */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Pods; sourceTree = "<group>"; };
+		7A30FB851C89294F00608D4F /* Pods.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Pods.xcodeproj; path = Pods/Pods.xcodeproj; sourceTree = "<group>"; };
 		7AAEAFC61C88E0BD0007C971 /* BattleShip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BattleShip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7AAEAFC91C88E0BD0007C971 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AAEAFCB1C88E0BD0007C971 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -31,16 +77,26 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A30FB901C8929DC00608D4F /* SocketIOClientSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7A30FB861C89294F00608D4F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7A30FB8B1C89294F00608D4F /* Pods.framework */,
+				7A30FB8D1C89294F00608D4F /* SocketIOClientSwift.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		7AAEAFBD1C88E0BD0007C971 = {
 			isa = PBXGroup;
 			children = (
-				1C40B7051C88F06700211735 /* Pods */,
+				7A30FB851C89294F00608D4F /* Pods.xcodeproj */,
 				7AAEAFC81C88E0BD0007C971 /* BattleShip */,
 				7AAEAFC71C88E0BD0007C971 /* Products */,
 			);
@@ -77,10 +133,13 @@
 				7AAEAFC21C88E0BD0007C971 /* Sources */,
 				7AAEAFC31C88E0BD0007C971 /* Frameworks */,
 				7AAEAFC41C88E0BD0007C971 /* Resources */,
+				7A30FB941C8929DD00608D4F /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				7A30FB8F1C89297200608D4F /* PBXTargetDependency */,
+				7A30FB931C8929DC00608D4F /* PBXTargetDependency */,
 			);
 			name = BattleShip;
 			productName = BattleShip;
@@ -114,12 +173,35 @@
 			mainGroup = 7AAEAFBD1C88E0BD0007C971;
 			productRefGroup = 7AAEAFC71C88E0BD0007C971 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 7A30FB861C89294F00608D4F /* Products */;
+					ProjectRef = 7A30FB851C89294F00608D4F /* Pods.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				7AAEAFC51C88E0BD0007C971 /* BattleShip */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		7A30FB8B1C89294F00608D4F /* Pods.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Pods.framework;
+			remoteRef = 7A30FB8A1C89294F00608D4F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7A30FB8D1C89294F00608D4F /* SocketIOClientSwift.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SocketIOClientSwift.framework;
+			remoteRef = 7A30FB8C1C89294F00608D4F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		7AAEAFC41C88E0BD0007C971 /* Resources */ = {
@@ -139,13 +221,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1C40B7061C88F06700211735 /* Pods in Sources */,
 				7AAEAFCC1C88E0BD0007C971 /* ViewController.swift in Sources */,
 				7AAEAFCA1C88E0BD0007C971 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7A30FB8F1C89297200608D4F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Socket.IO-Client-Swift";
+			targetProxy = 7A30FB8E1C89297200608D4F /* PBXContainerItemProxy */;
+		};
+		7A30FB931C8929DC00608D4F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Socket.IO-Client-Swift";
+			targetProxy = 7A30FB921C8929DC00608D4F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		7AAEAFCD1C88E0BD0007C971 /* Main.storyboard */ = {
@@ -254,6 +348,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = BattleShip/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Zishi-Wu.BattleShip";
@@ -265,6 +361,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = BattleShip/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Zishi-Wu.BattleShip";
