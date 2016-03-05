@@ -16,6 +16,7 @@ class GameScene: SKScene {
     var gameController: GameController!
     var brushColor = TileColor.Red
     var gameTimer: NSTimer!
+    let client = Client()
     
     override func didMoveToView(view: SKView) {
         // gamescene.sks messes up view, let's fix that
@@ -43,7 +44,8 @@ class GameScene: SKScene {
         
         // everything loaded, let us set up game timer
         self.gameController.startTime = NSDate.timeIntervalSinceReferenceDate()
-        self.gameTimer = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: "updateTimer:", userInfo: nil, repeats: true)
+        //self.gameTimer = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: "updateTimer:", userInfo: nil, repeats: true)
+        client.talkToServer()
     }
     
     func updateTimer(timer: NSTimer) {
