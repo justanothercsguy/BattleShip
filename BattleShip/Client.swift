@@ -10,7 +10,7 @@ import Foundation
 import SocketIOClientSwift
 
 class Client {
-    let socket = SocketIOClient(socketURL: NSURL(string: "http://localhost:8080")!, options: [.Log(true), .ForcePolling(true)])
+    let socket = SocketIOClient(socketURL: NSURL(string: "http://localhost:3000")!, options: [.Log(false), .ForcePolling(true)])
     
     func talkToServer() {        
         socket.on("connect") {data, ack in
@@ -28,6 +28,8 @@ class Client {
         }
         
         socket.connect()
-
+        
+        self.socket.emit("test");
+        print("emitted test")
     }
 }
