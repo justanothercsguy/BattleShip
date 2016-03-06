@@ -11,25 +11,35 @@ import SocketIOClientSwift
 
 class Client {
     let socket = SocketIOClient(socketURL: NSURL(string: "http://localhost:3000")!, options: [.Log(false), .ForcePolling(true)])
+    var id: Int!
+    var gameBoard: GameBoard
     
-    func talkToServer() {        
-        socket.on("connect") {data, ack in
+    init(gameBoard: GameBoard) {
+        self.gameBoard = gameBoard
+    }
+    
+    func setupHandlersAndConnect() {
+        self.socket.on("connect") {data, ack in
             print("socket connected")
-        }
-        
-        socket.on("currentAmount") {data, ack in
-            if let cur = data[0] as? Double {
-                self.socket.emitWithAck("canUpdate", cur)(timeoutAfter: 0) {data in
-                    self.socket.emit("update", ["amount": cur + 2.50])
-                }
-                
-                ack.with("Got your currentAmount", "dude")
+            
+            if let id = data[0] as? Int {
+                self.id = id
             }
         }
         
-        socket.connect()
+        self.socket.on("updateGameBoard") {data, ack in
+            if let gameBoardData = data[0] as? NSDictionary {
+                // go through the message and use it to update the gameboard
+                for tileCoords in gameBoardData {
+
+                }
+            }
+        }
         
-        self.socket.emit("test");
-        print("emitted test")
+        self.socket.on("gameWon") {data, ack in
+            
+        }
+        
+        socket.connect()
     }
 }
