@@ -20,6 +20,8 @@ class InitialScene: SKScene {
         let xPos = (self.view?.bounds.width)! / 4
         self.newGameButton.position = CGPoint(x: xPos, y: yPos)
         self.addChild(self.newGameButton)
+        let scene = GameScene(fileNamed: "GameScene")
+        self.view?.presentScene(scene)
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {

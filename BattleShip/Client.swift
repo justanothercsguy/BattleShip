@@ -24,10 +24,6 @@ class Client {
     func setupHandlersAndConnect() {
         self.socket.on("connect") {[weak self] data, ack in
             print("socket connected")
-            
-            if let id = data[0] as? Int {
-                self?.id = id
-            }
         }
         
         self.socket.on("updateGameBoard") {[weak self] data, ack in
@@ -41,6 +37,12 @@ class Client {
         
         self.socket.on("gameWon") {data, ack in
             
+        }
+        
+        self.socket.on("clientID") {[weak self] data, ack in
+            if let id = data[0] as? Int {
+                self?.id = id
+            }
         }
         
         socket.connect()

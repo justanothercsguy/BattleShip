@@ -39,6 +39,12 @@ class GameScene: SKScene {
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         /* Called when a touch begins */
         for touch in touches {
+            self.client.socket.emitWithAck("findPlayers", self.client.id)(timeoutAfter: 0, callback: {[weak self] data in
+                print(data)
+                self?.client.socket.emit("selectedPlayer", (self?.client)!.id,2)
+            })
+            break
+            
             let touchedNode = self.getTouchedNode(touch.locationInView(self.view))
             let touchedTile = self.game_board.tileFromName(touchedNode?.name)
             
