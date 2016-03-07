@@ -43,10 +43,11 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
     
     // selected a row in the table view
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let otherPlayerID = self.players[indexPath.row]
+        let otherPlayerID = self.players[indexPath.row] as! Int
 
         Client.sharedInstance.socket.emitWithAck("selectedPlayer", Client.sharedInstance.id, otherPlayerID)(timeoutAfter: 0, callback: {[weak self] data in
             if let data = data[0] as? String where data == "ok" {
+                Client.sharedInstance.otherPlayerID = otherPlayerID
                 let storyBoard = UIStoryboard(name: "Main", bundle: nil)
                 let gameVC = storyBoard.instantiateViewControllerWithIdentifier("GameViewController") as! GameViewController
                 

@@ -210,7 +210,10 @@ io.on('connection', function(socket) {
         var player1 = clients[playerID];
         var player2 = clients[selectedPlayerID];
 
-        games[playerID.toString() + selectedPlayerID.toString()] = new Game(player1, player2);
+        var game = new Game(player1, player2);
+        game.initializeBoard();
+        games[playerID.toString() + selectedPlayerID.toString()] = game;
+
         fn("ok");
         
         // send player1's view of board as 2d array to client
@@ -218,11 +221,17 @@ io.on('connection', function(socket) {
     });
 
     // this will be emitted with ack, fn is the function we use to ack
-    socket.on("playerTappedBoard", function(playerID, column, row, fn) {
-        //etc
-        //var validMove = 
+    socket.on("playerTappedBoard", function(p1ID, p2ID, column, row, fn) {
+    	var game = games[p1ID.toString() + p2ID.toString()];
+        var validMove = game.checkValidMove(column, row, p1ID);
 
-        fn("valid");
+        if (validMove) {
+        	game.setTile(column, row, p1ID);
+    		fn("valid");
+    		// TODO: if won, emit won
+        } else {
+        	fn("invalid");
+        }
     });
 });
 
