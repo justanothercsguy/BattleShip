@@ -38,9 +38,8 @@ function Game(p1, p2) {
     this.dimension = this.board.length;
     
     // two arrays to separate what each player can see in board
-    // initially each array is same dimension as board but full of 0's
-    this.p1_board = new Array(dimension).fill(new Array(dimension));
-    this.p2_board = new Array(dimension).fill(new Array(dimension));
+    this.p1_board = []
+    this.p2_board = [] 
     
     // keeps track of number of ships each player has
     this.player1_ship_count = 0;
@@ -96,6 +95,9 @@ function Game(p1, p2) {
         for (var i = 0; i < this.dimension; i++) {
             this.board[i] = col;
         }
+        // also initialize player one and player 2 boards - trying different 2d array initialize method
+        this.p1_board = new Array(this.dimension).fill(new Array(this.dimension).fill(0));
+        this.p2_board = new Array(this.dimension).fill(new Array(this.dimension).fill(0));
     }
 
     // randomly add ships to board - 0 for empty spot, 1 for player 1's ships, 2 for player 2's ship
@@ -131,7 +133,7 @@ function Game(p1, p2) {
     }
     
     this.checkValidMove = function(column, row, playerID) {
-        var tile = this.getTile(column, row);
+        var tile = this.getTile(column, row, this.board);
         console.log(tile);
 
         // valid move if the tile is empty or if the tile is a ship of the opposite player
@@ -223,7 +225,7 @@ io.on('connection', function(socket) {
         fn("ok");
         
         // send player1's view of board as 2d array to client
-        socket.emit("initialBoard", games[playerID.toString() + selectedPlayerID.toString()].getPlayer1Board());
+        // socket.emit("initialBoard", games[playerID.toString() + selectedPlayerID.toString()].getPlayer1Board());
     });
 
     // this will be emitted with ack, fn is the function we use to ack
@@ -236,7 +238,7 @@ io.on('connection', function(socket) {
      	console.log("after " + game.board[column]);
 
         if (validMove) {
-        	game.setTile(column, row, p1ID);
+        	game.setTile(column, row, p1ID, game.board);
     		fn("valid");
     		// TODO: if won, emit won
         } else {
