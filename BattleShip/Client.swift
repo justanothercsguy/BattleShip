@@ -13,21 +13,24 @@ class Client {
     let socket = SocketIOClient(socketURL: NSURL(string: "http://localhost:3000")!, options: [.Log(false), .ForcePolling(true)])
     var id: Int!
     var gameBoard: GameBoard
+    var gameScene: GameScene
+    var gameWon = false
     
-    init(gameBoard: GameBoard) {
+    init(gameBoard: GameBoard, gameScene: GameScene) {
         self.gameBoard = gameBoard
+        self.gameScene = gameScene
     }
     
     func setupHandlersAndConnect() {
-        self.socket.on("connect") {data, ack in
+        self.socket.on("connect") {[weak self] data, ack in
             print("socket connected")
             
             if let id = data[0] as? Int {
-                self.id = id
+                self?.id = id
             }
         }
         
-        self.socket.on("updateGameBoard") {data, ack in
+        self.socket.on("updateGameBoard") {[weak self] data, ack in
             if let gameBoardData = data[0] as? NSDictionary {
                 // go through the message and use it to update the gameboard
                 for tileCoords in gameBoardData {

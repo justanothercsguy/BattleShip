@@ -31,7 +31,7 @@ class GameScene: SKScene {
             }
         }
         
-        self.client = Client(gameBoard: self.game_board)
+        self.client = Client(gameBoard: self.game_board, gameScene: self)
         
         client.setupHandlersAndConnect()
     }
@@ -43,7 +43,20 @@ class GameScene: SKScene {
             let touchedTile = self.game_board.tileFromName(touchedNode?.name)
             
             if let tile = touchedTile {
-                self.client.socket.emit("playerTappedBoard", tile.column, tile.row)
+                self.client.socket.emitWithAck("playerTappedBoard", tile.column, tile.row)(timeoutAfter: 0, callback: {data in
+                    // if server returns valid move, let us place the used sprite on that tile
+                    if data[0] as! String == "valid" {
+                        let usedTileSprite = SKSpriteNode(imageNamed: "hit_sprite")
+                        usedTileSprite.position = tile.sprite!.position
+                        usedTileSprite.size = tile.sprite!.size
+                        
+                        // shrink to half the size so it fits within a tile
+                        usedTileSprite.setScale(0.5)
+                    } else {
+                        // do something more pretty with the ui later, let mr. wu handle this
+                        print("invalid move")
+                    }
+                })
             }
         }
     }
@@ -59,5 +72,19 @@ class GameScene: SKScene {
         let touchedSprite = self.nodeAtPoint(convertedPosition)
         
         return touchedSprite
+    }
+    
+    func handleWin(youWon: Bool) {
+        let gameFinishedScene = GameFinishedScene(fileNamed: "GameFinishedScene")
+        
+        // we set the winLoseLabelText variable as appropriate and then in didMoveToView, we set the actual label to the value of the text variable.
+        // otherwise, if we set it here, the actual sklabelnode will be nil since it hasn't been unwrapped from the sks file yet
+        if youWon {
+            gameFinishedScene?.winLoseLabelText = "you won"
+        } else {
+            gameFinishedScene?.winLoseLabelText = "you lost"
+        }
+        
+        self.view?.presentScene(gameFinishedScene)
     }
 }
