@@ -27,13 +27,24 @@ function Player(id) {
     }
 }
 
-// define Game class - parameters: player1, player2, board
+// Game class - parameters: player1, player2, board
 function Game(p1, p2) {
 
     this.p1 = p1;
     this.p2 = p2;
+    
+    // full game board array
     this.board = []
     this.dimension = this.board.length;
+    
+    // two arrays to separate what each player can see in board
+    // initially each array is same dimension as board but full of 0's
+    this.p1_board = new Array(dimension).fill(new Array(dimension));
+    this.p2_board = new Array(dimension).fill(new Array(dimension));
+    
+    // keeps track of number of ships each player has
+    this.player1_ship_count = 0;
+    this.player2_ship_count = 0;
 
     this.getPlayer1 = function() {
         return this.p1;
@@ -46,17 +57,26 @@ function Game(p1, p2) {
     this.getBoard = function() {
         return board;
     }
-
+    
+    this.getPlayer1Board = function() {
+    		return this.p1_board;
+    }
+    
+    this.getPlayer2Board = function() {
+    		return this.p2_board;
+    }
+	
     // return 0 = empty, 1 = player1's ship, 2 = player2's ship, undefined if outside of board
-    // column is the index of the 2-d board array
-    this.getTile = function(col, row) {
-        return this.board[col][row];
+    // column is the index of the 2-d board array - 
+    this.getTile = function(col, row, board) {
+        return board[col][row];
     }
 
-    this.setTile = function(col, row, value) {
-        this.board[col][row] = value;
+		// add value to specified board (full game, player1's view, or player2's view)
+    this.setTile = function(col, row, value, board) {
+        board[col][row] = value;
     }
-
+    
     // col, row = 2d coordinates of tile, gives unique values of tiles ranging from 
     // 0 to (dimension^2 - 1) to tell which tiles are empty and available for ship to be placed in
     /*	NOT WORKING FOR SOME REASON
@@ -78,38 +98,38 @@ function Game(p1, p2) {
         }
     }
 
-    // randomly add ships to board - 0 for empty spot, 1 for player 1's ship, 2 for player 2's ship
-    // we will implement battleship actual rules later - for now, just add a ship for each player
+    // randomly add ships to board - 0 for empty spot, 1 for player 1's ships, 2 for player 2's ship
+    // we will implement battleship actual rules later - for now, just add five ships for each player
     this.initializeShips = function() {
-        var added_player1_ship = 0;
-        var added_player2_ship = 0;
 
-        // add player 1's ship
-        while (added_player1_ship == 0) {
+        // add player 1's five ships
+        while (this.player1_ship_count < 5) {
             col = Math.floor((Math.random() * this.dimension));
             row = Math.floor((Math.random() * this.dimension));
-            // if we find an empty tile, insert 1 for player 1's ship and add coordinates to
-            // player 1's array of ships
-            if (this.getTile(col, row) == 0) {
-                this.setTile(col, row, p1.getID());
-                added_player1_ship++;
+            // if we find an empty tile, insert id number for player 1's ship into board, update
+            // player1's board, and add coordinates to player 1's array of ships
+            if (this.getTile(col, row, this.board) == 0) {
+                this.setTile(col, row, p1.getID(), this.board);
+                this.setTile(col, row, p1.getID(), this.p1_board);
+                this.player1_ship_count++;
                 this.p1.ships.push([col, row]);
             }
         }
-        // add player 2's ship
-        while (added_player2_ship == 0) {
+        // add player 2's five ships
+        while (this.player2_ship_count < 5) {
             col = Math.floor((Math.random() * this.dimension));
             row = Math.floor((Math.random() * this.dimension));
-            // if we find an empty tile, insert 2 for player 2's ship and add coordinates to 
-            // player 2's array of ships
-            if (this.getTile(col, row) == 0) {
-                this.setTile(col, row, p2.getID());
-                added_player2_ship++;
+            // if we find an empty tile, insert id number for player 2's ship into board, update
+            // player1's board, and add coordinates to player 1's array of ships
+            if (this.getTile(col, row, this.board) == 0) {
+                this.setTile(col, row, p2.getID(), this.board);
+                this.setTile(col, row, p2.getID(), this.p2_board);
+                this.player2_ship_count++;
                 this.p2.ships.push([col, row]);
             }
         }
     }
-
+    
     this.checkValidMove = function(column, row, playerID) {
         var tile = this.getTile(column, row);
         console.log(tile);
@@ -142,6 +162,8 @@ gameStart - send back to each client participating in the game the size of the g
 
 // dictionary of players
 var clients = {};
+
+// id of players - large numbers mean player logged in later
 var id = 0;
 
 // dictionary of active games
@@ -199,6 +221,9 @@ io.on('connection', function(socket) {
         games[playerID.toString() + selectedPlayerID.toString()] = game;
 
         fn("ok");
+        
+        // send player1's view of board as 2d array to client
+        socket.emit("initialBoard", games[playerID.toString() + selectedPlayerID.toString()].getPlayer1Board());
     });
 
     // this will be emitted with ack, fn is the function we use to ack
