@@ -41,12 +41,14 @@ class GameScene: SKScene {
                 Client.sharedInstance.socket.emitWithAck("playerTappedBoard", Client.sharedInstance.id, Client.sharedInstance.otherPlayerID, tile.column, tile.row)(timeoutAfter: 0, callback: {data in
                     // if server returns valid move, let us place the used sprite on that tile
                     if data[0] as! String == "valid" {
+                        print("col \(tile.column), row \(tile.row)")
                         let usedTileSprite = SKSpriteNode(imageNamed: "hit_sprite")
                         usedTileSprite.position = tile.sprite!.position
                         usedTileSprite.size = tile.sprite!.size
                         
                         // shrink to half the size so it fits within a tile
                         usedTileSprite.setScale(0.5)
+                        self.addChild(usedTileSprite)
                     } else {
                         // do something more pretty with the ui later, let mr. wu handle this
                         print("invalid move")

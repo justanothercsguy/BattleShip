@@ -76,7 +76,7 @@ class GameBoard {
                 let tileName = String(column) + ", " + String(row)
                 
                 // add a new tile to specific row, column
-                let newTile = Tile(column: column, row: row, spritePosition: position, spriteSize: size, spriteName: tileName)
+                let newTile = Tile(column: row, row: column, spritePosition: position, spriteSize: size, spriteName: tileName)
                 tiles[column].append(newTile)
             }
         }

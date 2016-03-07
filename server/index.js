@@ -112,11 +112,17 @@ function Game(p1, p2) {
 
     this.checkValidMove = function(column, row, playerID) {
         var tile = this.getTile(column, row);
+        console.log(tile);
 
         // valid move if the tile is empty or if the tile is a ship of the opposite player
         return tile == 0 || tile != playerID;
     }
 
+    this.won = function(playerID) {
+    	var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
+
+
+    }
 }
 
 /*
@@ -199,6 +205,10 @@ io.on('connection', function(socket) {
     socket.on("playerTappedBoard", function(p1ID, p2ID, column, row, fn) {
     	var game = games[p1ID.toString() + p2ID.toString()];
         var validMove = game.checkValidMove(column, row, p1ID);
+        console.log("col " + column + " row " + row);
+        console.log(validMove);
+	   	console.log("before " + game.board[column]);
+     	console.log("after " + game.board[column]);
 
         if (validMove) {
         	game.setTile(column, row, p1ID);
