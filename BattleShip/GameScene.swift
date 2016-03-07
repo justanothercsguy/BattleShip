@@ -15,7 +15,6 @@ class GameScene: SKScene {
     var game_board: GameBoard!
     var brushColor = TileColor.Red
     var gameTimer: NSTimer!
-    var client : Client!
     
     override func didMoveToView(view: SKView) {
         // gamescene.sks messes up view, let's fix that
@@ -30,18 +29,14 @@ class GameScene: SKScene {
                 self.addChild(tile.sprite!)
             }
         }
-        
-        self.client = Client(gameBoard: self.game_board, gameScene: self)
-        
-        client.setupHandlersAndConnect()
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         /* Called when a touch begins */
         for touch in touches {
-            self.client.socket.emitWithAck("findPlayers", self.client.id)(timeoutAfter: 0, callback: {[weak self] data in
+            Client.sharedInstance.socket.emitWithAck("findPlayers", Client.sharedInstance.id)(timeoutAfter: 0, callback: {data in
                 print(data)
-                self?.client.socket.emit("selectedPlayer", (self?.client)!.id,2)
+                Client.sharedInstance.socket.emit("selectedPlayer", Client.sharedInstance.id, 2)
             })
             break
             
@@ -49,7 +44,7 @@ class GameScene: SKScene {
             let touchedTile = self.game_board.tileFromName(touchedNode?.name)
             
             if let tile = touchedTile {
-                self.client.socket.emitWithAck("playerTappedBoard", tile.column, tile.row)(timeoutAfter: 0, callback: {data in
+                Client.sharedInstance.socket.emitWithAck("playerTappedBoard", tile.column, tile.row)(timeoutAfter: 0, callback: {data in
                     // if server returns valid move, let us place the used sprite on that tile
                     if data[0] as! String == "valid" {
                         let usedTileSprite = SKSpriteNode(imageNamed: "hit_sprite")

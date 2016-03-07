@@ -111,10 +111,10 @@ function Game(p1, p2) {
     }
 
     this.checkValidMove = function(column, row, playerID) {
-    	var tile = this.getTile(column, row);
+        var tile = this.getTile(column, row);
 
-    	// valid move if the tile is empty or if the tile is a ship of the opposite player
-    	return tile == 0 || tile != playerID;
+        // valid move if the tile is empty or if the tile is a ship of the opposite player
+        return tile == 0 || tile != playerID;
     }
 
 }
@@ -134,7 +134,7 @@ gameStart - send back to each client participating in the game the size of the g
  as well as the position of each player’s ship on the gameboard.
 */
 
-// array of sockets (players)
+// dictionary of players
 var clients = {};
 var id = 0;
 
@@ -145,14 +145,14 @@ var games = {};
 var getOtherPlayers = function(player) {
 
     var otherPlayers = [];
+
     // if the player requesting is not alone in server
-    if (clients.length > 1) {
-        for (var i = 0; i < clients.length; i++) {
-            if (player.getID() != clients[i].getID()) {
-                otherPlayers.push(clients[i]);
-            }
+    for (var key in clients) {
+        if (player.getID() != clients[key].getID()) {
+            otherPlayers.push(clients[key].id);
         }
     }
+
     return otherPlayers;
 }
 
@@ -161,6 +161,14 @@ var getOtherPlayers = function(player) {
 // if a player connects to server, add player to clients array and increment id for next player
 io.on('connection', function(socket) {
     console.log('a user connected');
+
+    // testing get player list
+    //---------------------------------------------
+    if (id == 0) {
+    	clients[id] = new Player(id, socket);
+    	id++;
+    }
+    //---------------------------------------------
     clients[id] = new Player(id, socket);
 
     // send id to client
@@ -170,18 +178,18 @@ io.on('connection', function(socket) {
 
     // client wants to find other players
     socket.on("findPlayers", function(playerID, fn) {
-    	var otherPlayers = getOtherPlayers(clients[playerID]);
-
-    	// send the other players
-    	console.log(otherPlayers);
-    	fn(otherPlayers);
+        var otherPlayers = getOtherPlayers(clients[playerID]);
+        //var otherPlayersJSONString = JSON.stringify(otherPlayers);
+        // send the other players
+        fn(otherPlayers);
     });
 
-    socket.on("selectedPlayer", function(playerID, selectedPlayerID) {
-    	var player1 = clients[playerID];
-    	var player2 = clients[selectedPlayerID];
+    socket.on("selectedPlayer", function(playerID, selectedPlayerID, fn) {
+        var player1 = clients[playerID];
+        var player2 = clients[selectedPlayerID];
 
-    	games[playerID.toString() + selectedPlayerID.toString()] = new Game(player1, player2);
+        games[playerID.toString() + selectedPlayerID.toString()] = new Game(player1, player2);
+        fn("ok");
     });
 
     // this will be emitted with ack, fn is the function we use to ack

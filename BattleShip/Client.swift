@@ -10,16 +10,15 @@ import Foundation
 import SocketIOClientSwift
 
 class Client {
-    let socket = SocketIOClient(socketURL: NSURL(string: "http://localhost:3000")!, options: [.Log(false), .ForcePolling(true)])
-    var id: Int!
-    var gameBoard: GameBoard
-    var gameScene: GameScene
-    var gameWon = false
+    // make this a singleton
+    static let sharedInstance = Client()
     
-    init(gameBoard: GameBoard, gameScene: GameScene) {
-        self.gameBoard = gameBoard
-        self.gameScene = gameScene
-    }
+    let socket = SocketIOClient(socketURL: NSURL(string: "http://192.168.1.64:3000")!, options: [.Log(false), .ForcePolling(true)])
+    var id: Int!
+    var otherPlayerID: Int!
+    var gameBoard: GameBoard!
+    var gameScene: GameScene!
+    var gameWon = false
     
     func setupHandlersAndConnect() {
         self.socket.on("connect") {[weak self] data, ack in
