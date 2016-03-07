@@ -32,15 +32,15 @@ function Game(p1, p2) {
 
     this.p1 = p1;
     this.p2 = p2;
-    
+
     // full game board array
     this.board = []
     this.dimension = this.board.length;
-    
+
     // two arrays to separate what each player can see in board
     this.p1_board = []
-    this.p2_board = [] 
-    
+    this.p2_board = []
+
     // keeps track of number of ships each player has
     this.player1_ship_count = 0;
     this.player2_ship_count = 0;
@@ -56,45 +56,47 @@ function Game(p1, p2) {
     this.getBoard = function() {
         return board;
     }
-    
+
     this.getPlayer1Board = function() {
-    		return this.p1_board;
+        return this.p1_board;
     }
-    
+
     this.getPlayer2Board = function() {
-    		return this.p2_board;
+        return this.p2_board;
     }
-	
+
     // return 0 = empty, 1 = player1's ship, 2 = player2's ship, undefined if outside of board
     // column is the index of the 2-d board array - 
     this.getTile = function(col, row, board) {
         return board[col][row];
     }
 
-		// add value to specified board (full game, player1's view, or player2's view)
+    // add value to specified board (full game, player1's view, or player2's view)
     this.setTile = function(col, row, value, board) {
         board[col][row] = value;
     }
-    
+
     // col, row = 2d coordinates of tile, gives unique values of tiles ranging from 
     // 0 to (dimension^2 - 1) to tell which tiles are empty and available for ship to be placed in
-    /*	NOT WORKING FOR SOME REASON
-	
+    /*  NOT WORKING FOR SOME REASON
+    
     this.getOneDimensionalArrayIndex(col, row) {
-    	return (this.dimension * col) + row
+        return (this.dimension * col) + row
     }*/
 
     // Once a game starts, the server will create an empty (full of O's) random size grid (square) 
     // that is not smaller than 8x8 and not larger than 24x24.
     this.initializeBoard = function() {
         this.dimension = Math.floor((Math.random() * 16) + 8);
-        var col = [];
+
         for (var i = 0; i < this.dimension; i++) {
-            col.push(0);
+            var col = [0];
+
+            for (var j = 0; j < this.dimension; j++) {
+                this.board[i] = col;
+            }
         }
-        for (var i = 0; i < this.dimension; i++) {
-            this.board[i] = col;
-        }
+
         // also initialize player one and player 2 boards - trying different 2d array initialize method
         this.p1_board = new Array(this.dimension).fill(new Array(this.dimension).fill(0));
         this.p2_board = new Array(this.dimension).fill(new Array(this.dimension).fill(0));
@@ -131,17 +133,16 @@ function Game(p1, p2) {
             }
         }
     }
-    
+
     this.checkValidMove = function(column, row, playerID) {
         var tile = this.getTile(column, row, this.board);
-        console.log(tile);
 
         // valid move if the tile is empty or if the tile is a ship of the opposite player
         return tile == 0 || tile != playerID;
     }
 
     this.won = function(playerID) {
-    	var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
+        var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
 
 
     }
@@ -195,8 +196,8 @@ io.on('connection', function(socket) {
     // testing get player list
     //---------------------------------------------
     if (id == 0) {
-    	clients[id] = new Player(id, socket);
-    	id++;
+        clients[id] = new Player(id, socket);
+        id++;
     }
     //---------------------------------------------
     clients[id] = new Player(id, socket);
@@ -223,26 +224,26 @@ io.on('connection', function(socket) {
         games[playerID.toString() + selectedPlayerID.toString()] = game;
 
         fn("ok");
-        
+
         // send player1's view of board as 2d array to client
         // socket.emit("initialBoard", games[playerID.toString() + selectedPlayerID.toString()].getPlayer1Board());
     });
 
     // this will be emitted with ack, fn is the function we use to ack
     socket.on("playerTappedBoard", function(p1ID, p2ID, column, row, fn) {
-    	var game = games[p1ID.toString() + p2ID.toString()];
+        var game = games[p1ID.toString() + p2ID.toString()];
         var validMove = game.checkValidMove(column, row, p1ID);
         console.log("col " + column + " row " + row);
         console.log(validMove);
-	   	console.log("before " + game.board[column]);
-     	console.log("after " + game.board[column]);
+        console.log("before " + game.board[column]);
+        console.log("after " + game.board[column]);
 
         if (validMove) {
-        	game.setTile(column, row, p1ID, game.board);
-    		fn("valid");
-    		// TODO: if won, emit won
+            game.setTile(column, row, p1ID, game.board);
+            fn("valid");
+            // TODO: if won, emit won
         } else {
-        	fn("invalid");
+            fn("invalid");
         }
     });
 });
