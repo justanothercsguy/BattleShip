@@ -34,17 +34,11 @@ class GameScene: SKScene {
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         /* Called when a touch begins */
         for touch in touches {
-            Client.sharedInstance.socket.emitWithAck("findPlayers", Client.sharedInstance.id)(timeoutAfter: 0, callback: {data in
-                print(data)
-                Client.sharedInstance.socket.emit("selectedPlayer", Client.sharedInstance.id, 2)
-            })
-            break
-            
             let touchedNode = self.getTouchedNode(touch.locationInView(self.view))
             let touchedTile = self.game_board.tileFromName(touchedNode?.name)
             
             if let tile = touchedTile {
-                Client.sharedInstance.socket.emitWithAck("playerTappedBoard", tile.column, tile.row)(timeoutAfter: 0, callback: {data in
+                Client.sharedInstance.socket.emitWithAck("playerTappedBoard", Client.sharedInstance.id, Client.sharedInstance.otherPlayerID, tile.column, tile.row)(timeoutAfter: 0, callback: {data in
                     // if server returns valid move, let us place the used sprite on that tile
                     if data[0] as! String == "valid" {
                         let usedTileSprite = SKSpriteNode(imageNamed: "hit_sprite")
