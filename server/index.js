@@ -271,7 +271,7 @@ io.on('connection', function(socket) {
     	var player1 = clients[p1ID];
 
         var game = games[p1ID.toString() + p2ID.toString()];
-        var validMove = game.checkValidMove(column, row, p1ID);
+        var validMove = game.checkValidMove(column, row, player1.boardID);
 
         if (validMove) {
             game.setTile(column, row, player1.boardID, game.board);
