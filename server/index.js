@@ -97,7 +97,7 @@ function Game(p1, p2) {
     // Once a game starts, the server will create an empty (full of O's) random size grid (square) 
     // that is not smaller than 8x8 and not larger than 24x24.
     this.initializeBoard = function() {
-        this.dimension = 8;//;Math.floor((Math.random() * 16) + 8);
+        this.dimension = 4;//;Math.floor((Math.random() * 16) + 8);
 
         for (var i = 0; i < this.dimension; i++) {
             var col = [];
@@ -118,6 +118,8 @@ function Game(p1, p2) {
     // we will implement battleship actual rules later - for now, just add five ships for each player
     this.initializeShips = function() {
 
+		// why are repeating coordinates being printed for player 2
+		
         // add player 1's five ships
         while (this.player1_ship_count < 5) {
             var col = Math.floor((Math.random() * this.dimension));
@@ -125,8 +127,10 @@ function Game(p1, p2) {
             // if we find an empty tile, insert id number for player 1's ship into board, update
             // player1's board, and add coordinates to player 1's array of ships
             if (this.getTile(col, row, this.board) == 0) {
-                this.setTile(col, row, p1.getID(), this.board);
-                this.setTile(col, row, p1.getID(), this.p1_board);
+            		console.log(col + ", " + row + "p1 board id: " + p1.boardID);
+                // this.setTile(col, row, p1.getID(), this.board);
+                this.board[col][row] = p1.boardID;
+                this.setTile(col, row, p1.boardID, this.p1_board);
                 this.player1_ship_count++;
                 this.p1.ships.push([col, row]);
             }
@@ -139,12 +143,16 @@ function Game(p1, p2) {
             // if we find an empty tile, insert id number for player 2's ship into board, update
             // player1's board, and add coordinates to player 1's array of ships
             if (this.getTile(col, row, this.board) == 0) {
-                this.setTile(col, row, p2.getID(), this.board);
-                this.setTile(col, row, p2.getID(), this.p2_board);
+            		console.log(col + ", " + row + "p2 board id: " + p2.boardID);
+            		this.board[col][row] = p2.boardID;
+                // this.setTile(col, row, p2.getID(), this.board);
+                this.setTile(col, row, p2.boardID, this.p2_board);
                 this.player2_ship_count++;
                 this.p2.ships.push([col, row]);
             }
         }
+        console.log(this.p1.ships)
+        console.log(this.p2.ships)
     }
 
     this.checkValidMove = function(column, row, playerID) {
