@@ -73,7 +73,7 @@ class GameBoard {
                 let position = CGPointMake(xCoord, yCoord)
                 let size = CGSizeMake(spriteWidth, spriteHeight)
                 // name = row, column to identify sprite at specific location
-                let tileName = String(column) + ", " + String(row)
+                let tileName = String(column) + "," + String(row)
                 
                 // add a new tile to specific row, column
                 let newTile = Tile(column: row, row: column, spritePosition: position, spriteSize: size, spriteName: tileName)
@@ -90,10 +90,9 @@ class GameBoard {
     func tileFromName(tileName: String?) -> Tile? {
         if let name = tileName {
             // no way to access character at index in swift see: https://www.reddit.com/r/swift/comments/2bvrh9/getting_a_specific_character_in_a_string/
-            let colIndex = name.startIndex.advancedBy(0)
-            let rowIndex = name.startIndex.advancedBy(3)
-            let row = Int(String(name[rowIndex]))!
-            let column = Int(String(name[colIndex]))!
+            let coords = name.characters.split{$0 == ","}.map(String.init)
+            let row = Int(String(coords[1]))!
+            let column = Int(String(coords[0]))!
             
             return tiles[column][row]
         }

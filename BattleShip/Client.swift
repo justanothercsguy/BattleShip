@@ -8,6 +8,7 @@
 
 import Foundation
 import SocketIOClientSwift
+import SpriteKit
 
 class Client {
     // make this a singleton
@@ -31,6 +32,12 @@ class Client {
                 for tileCoords in gameBoardData {
 
                 }
+            }
+        }
+        
+        self.socket.on("initialBoard") {data, ack in
+            if let data = data[0] as? NSArray {
+                
             }
         }
         

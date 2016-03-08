@@ -46,11 +46,11 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
         let otherPlayerID = self.players[indexPath.row] as! Int
 
         Client.sharedInstance.socket.emitWithAck("selectedPlayer", Client.sharedInstance.id, otherPlayerID)(timeoutAfter: 0, callback: {[weak self] data in
-            if let data = data[0] as? String where data == "ok" {
+            if let data = data[0] as? String where data != "not ok" {
                 Client.sharedInstance.otherPlayerID = otherPlayerID
                 let storyBoard = UIStoryboard(name: "Main", bundle: nil)
                 let gameVC = storyBoard.instantiateViewControllerWithIdentifier("GameViewController") as! GameViewController
-                
+                gameVC.gameBoardSize = Int(data)
                 self?.presentViewController(gameVC, animated: true, completion: nil)
             } else {
                 print("error creating game")

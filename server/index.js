@@ -53,16 +53,24 @@ function Game(p1, p2) {
         return this.p2;
     }
 
-    this.getBoard = function() {
-        return board;
-    }
-
     this.getPlayer1Board = function() {
         return this.p1_board;
     }
 
     this.getPlayer2Board = function() {
         return this.p2_board;
+    }
+
+    this.getBoard = function(player) {
+    	if (player.id == this.p1.id) {
+    		return this.getPlayer1Board();
+    	}
+
+    	if (player.id == this.p2.id) {
+    		return this.getPlayer2Board();
+    	}
+
+        return this.board;
     }
 
     // return 0 = empty, 1 = player1's ship, 2 = player2's ship, undefined if outside of board
@@ -108,8 +116,8 @@ function Game(p1, p2) {
 
         // add player 1's five ships
         while (this.player1_ship_count < 5) {
-            col = Math.floor((Math.random() * this.dimension));
-            row = Math.floor((Math.random() * this.dimension));
+            var col = Math.floor((Math.random() * this.dimension));
+            var row = Math.floor((Math.random() * this.dimension));
             // if we find an empty tile, insert id number for player 1's ship into board, update
             // player1's board, and add coordinates to player 1's array of ships
             if (this.getTile(col, row, this.board) == 0) {
@@ -121,8 +129,9 @@ function Game(p1, p2) {
         }
         // add player 2's five ships
         while (this.player2_ship_count < 5) {
-            col = Math.floor((Math.random() * this.dimension));
-            row = Math.floor((Math.random() * this.dimension));
+            var col = Math.floor((Math.random() * this.dimension));
+            var row = Math.floor((Math.random() * this.dimension));
+            console.log(row);
             // if we find an empty tile, insert id number for player 2's ship into board, update
             // player1's board, and add coordinates to player 1's array of ships
             if (this.getTile(col, row, this.board) == 0) {
@@ -130,8 +139,11 @@ function Game(p1, p2) {
                 this.setTile(col, row, p2.getID(), this.p2_board);
                 this.player2_ship_count++;
                 this.p2.ships.push([col, row]);
+                console.log(this.p2.ships);
             }
         }
+
+        console.log("here " + this.p2.getShips());
     }
 
     this.checkValidMove = function(column, row, playerID) {
@@ -141,9 +153,14 @@ function Game(p1, p2) {
         return tile == 0 || tile != playerID;
     }
 
+    this.checkHit = function(column, row, playerBoard) {
+    	var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
+
+    	return this.getBoard()[column][row] == otherPlayer.id;
+    }
+
     this.won = function(playerID) {
         var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
-
 
     }
 }
@@ -221,22 +238,20 @@ io.on('connection', function(socket) {
 
         var game = new Game(player1, player2);
         game.initializeBoard();
+        game.initializeShips();
         games[playerID.toString() + selectedPlayerID.toString()] = game;
 
-        fn("ok");
+        fn(game.dimension.toString());
 
         // send player1's view of board as 2d array to client
-        // socket.emit("initialBoard", games[playerID.toString() + selectedPlayerID.toString()].getPlayer1Board());
+        console.log("over " + player2.getShips());
+        socket.emit("initialBoard", player1.getShips());
     });
 
     // this will be emitted with ack, fn is the function we use to ack
     socket.on("playerTappedBoard", function(p1ID, p2ID, column, row, fn) {
         var game = games[p1ID.toString() + p2ID.toString()];
         var validMove = game.checkValidMove(column, row, p1ID);
-        console.log("col " + column + " row " + row);
-        console.log(validMove);
-        console.log("before " + game.board[column]);
-        console.log("after " + game.board[column]);
 
         if (validMove) {
             game.setTile(column, row, p1ID, game.board);
