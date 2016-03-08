@@ -19,6 +19,16 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
         // Do any additional setup after loading the view.
         self.playerTableView.delegate = self
         self.playerTableView.dataSource = self
+        
+        Client.sharedInstance.socket.on("initialBoard") {[weak self]data, ack in
+            if let data = data[0] as? NSArray {
+                // 
+                // Client.sharedInstance.shipsArray
+                let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+                let gameVC = storyBoard.instantiateViewControllerWithIdentifier("GameViewController") as! GameViewController
+                self?.presentViewController(gameVC, animated: true, completion: nil)
+            }
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -48,10 +58,7 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
         Client.sharedInstance.socket.emitWithAck("selectedPlayer", Client.sharedInstance.id, otherPlayerID)(timeoutAfter: 0, callback: {[weak self] data in
             if let data = data[0] as? String where data != "not ok" {
                 Client.sharedInstance.otherPlayerID = otherPlayerID
-                let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-                let gameVC = storyBoard.instantiateViewControllerWithIdentifier("GameViewController") as! GameViewController
                 Client.sharedInstance.gameboardSize = Int(data)
-                self?.presentViewController(gameVC, animated: true, completion: nil)
             } else {
                 print("error creating game")
             }

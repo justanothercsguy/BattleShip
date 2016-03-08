@@ -34,16 +34,10 @@ class Client {
         
         self.socket.on("updateGameBoard") {[weak self] data, ack in
             if let gameBoardData = data[0] as? NSDictionary {
-                // go through the message and use it to update the gameboard
+                // go through the message - should be NSArray or NSDictionary
                 for tileCoords in gameBoardData {
 
                 }
-            }
-        }
-        
-        self.socket.on("initialBoard") {data, ack in
-            if let data = data[0] as? NSArray {
-                
             }
         }
         
