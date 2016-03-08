@@ -118,6 +118,8 @@ function Game(p1, p2) {
     // we will implement battleship actual rules later - for now, just add five ships for each player
     this.initializeShips = function() {
 
+		// why are repeating coordinates being printed for player 2
+		
         // add player 1's five ships
         while (this.player1_ship_count < 5) {
             var col = Math.floor((Math.random() * this.dimension));
@@ -145,6 +147,8 @@ function Game(p1, p2) {
                 this.p2.ships.push([col, row]);
             }
         }
+        console.log(this.p1.ships)
+        console.log(this.p2.ships)
     }
 
     this.checkValidMove = function(column, row, playerID) {
