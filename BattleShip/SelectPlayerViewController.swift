@@ -22,11 +22,22 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
         
         Client.sharedInstance.socket.on("initialBoard") {[weak self]data, ack in
             if let data = data[0] as? NSArray {
-                // 
-                // Client.sharedInstance.shipsArray
+                // iterate through NSArray to get [col, row] data and add Coordinates(row, col) to shipsArray
+                for index in 0...data.count - 1 {
+                    let coordinateArray: NSArray = data[index] as! NSArray
+                    let col = coordinateArray[0] as! Int
+                    let row = coordinateArray[1] as! Int
+                    
+                    let newCoordinate = Coordinates(xCoord: row, yCoord: col)
+                    Client.sharedInstance.shipsArray.append(newCoordinate)
+                    // print(newCoordinate)
+                }
+                
                 let storyBoard = UIStoryboard(name: "Main", bundle: nil)
                 let gameVC = storyBoard.instantiateViewControllerWithIdentifier("GameViewController") as! GameViewController
                 self?.presentViewController(gameVC, animated: true, completion: nil)
+            } else {
+                print("Failed to get data")
             }
         }
     }
