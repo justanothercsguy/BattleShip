@@ -25,10 +25,25 @@ class GameScene: SKScene {
         // add sprites to scene
         for tiles in game_board.tiles {
             for tile in tiles {
-                print(tile.description)
+                // print(tile.description)
                 self.addChild(tile.sprite!)
             }
         }
+        // add ships to GameBoard
+        let ships = Client.sharedInstance.shipsArray
+        for index in 0...ships.count - 1 {
+            // tile that we need to add ship_sprite to
+            let tile = game_board.tiles[ships[index].yCoord][ships[index].xCoord]
+            let ship = SKSpriteNode(imageNamed: "battleship")
+            ship.position = tile.sprite!.position
+            ship.size = tile.sprite!.size
+            
+            // if I set ship to same size as tile sprite, then ship sprite prevents tile from 
+            // getting registered as a valid move and showing an x mark
+            // ship.setScale(0.5)
+            self.addChild(ship)
+        }
+        
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {

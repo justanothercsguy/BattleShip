@@ -8,7 +8,7 @@ app.get('/', function(req, res) {
     res.sendfile('index.html');
 });
 
-// Player class - parameters: id, score, ships
+// Player class - parameters: id, score, ships (stores arrays [column, row] of ship location)
 function Player(id) {
     this.id = id;
     this.score = 0;
