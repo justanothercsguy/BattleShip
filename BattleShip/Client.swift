@@ -10,6 +10,12 @@ import Foundation
 import SocketIOClientSwift
 import SpriteKit
 
+// to hold data that the server gives back
+struct Coordinates {
+    var xCoord: Int!
+    var yCoord: Int!
+}
+
 class Client {
     // make this a singleton
     static let sharedInstance = Client()
@@ -19,6 +25,7 @@ class Client {
     var otherPlayerID: Int!
     var gameWon = false
     var gameboardSize: Int!
+    var shipsArray: [Coordinates]!
     
     func setupHandlersAndConnect() {
         self.socket.on("connect") {[weak self] data, ack in
