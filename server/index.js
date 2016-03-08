@@ -98,11 +98,13 @@ function Game(p1, p2) {
         this.dimension = Math.floor((Math.random() * 16) + 8);
 
         for (var i = 0; i < this.dimension; i++) {
-            var col = [0];
+            var col = [];
 
             for (var j = 0; j < this.dimension; j++) {
-                this.board[i] = col;
+           		col.push(0);
             }
+
+            this.board[i] = col;
         }
 
         // also initialize player one and player 2 boards - trying different 2d array initialize method
@@ -131,7 +133,7 @@ function Game(p1, p2) {
         while (this.player2_ship_count < 5) {
             var col = Math.floor((Math.random() * this.dimension));
             var row = Math.floor((Math.random() * this.dimension));
-            console.log(row);
+
             // if we find an empty tile, insert id number for player 2's ship into board, update
             // player1's board, and add coordinates to player 1's array of ships
             if (this.getTile(col, row, this.board) == 0) {
@@ -139,11 +141,8 @@ function Game(p1, p2) {
                 this.setTile(col, row, p2.getID(), this.p2_board);
                 this.player2_ship_count++;
                 this.p2.ships.push([col, row]);
-                console.log(this.p2.ships);
             }
         }
-
-        console.log("here " + this.p2.getShips());
     }
 
     this.checkValidMove = function(column, row, playerID) {
