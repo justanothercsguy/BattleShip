@@ -51,6 +51,10 @@ class Client {
             }
         }
         
+        self.socket.on("won") {data, ack in
+            print("won")
+        }
+        
         socket.connect()
     }
 }

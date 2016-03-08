@@ -9,10 +9,12 @@ app.get('/', function(req, res) {
 });
 
 // Player class - parameters: id, score, ships
-function Player(id) {
+function Player(id, socket) {
     this.id = id;
+    this.socket = socket;
     this.score = 0;
     this.ships = [];
+    this.boardID = -1;
 
     this.getID = function() {
         return this.id;
@@ -62,13 +64,13 @@ function Game(p1, p2) {
     }
 
     this.getBoard = function(player) {
-    	if (player.id == this.p1.id) {
-    		return this.getPlayer1Board();
-    	}
+        if (player.id == this.p1.id) {
+            return this.getPlayer1Board();
+        }
 
-    	if (player.id == this.p2.id) {
-    		return this.getPlayer2Board();
-    	}
+        if (player.id == this.p2.id) {
+            return this.getPlayer2Board();
+        }
 
         return this.board;
     }
@@ -101,7 +103,7 @@ function Game(p1, p2) {
             var col = [];
 
             for (var j = 0; j < this.dimension; j++) {
-           		col.push(0);
+                col.push(0);
             }
 
             this.board[i] = col;
@@ -153,14 +155,29 @@ function Game(p1, p2) {
     }
 
     this.checkHit = function(column, row, playerBoard) {
-    	var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
+        var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
 
-    	return this.getBoard()[column][row] == otherPlayer.id;
+        return this.getBoard()[column][row] == otherPlayer.id;
     }
 
     this.won = function(playerID) {
         var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
+        var otherPlayerArray = otherPlayer.getShips();
+        console.log(otherPlayerArray.length);
 
+        for (var i = 0; i < otherPlayerArray.length; i++) {
+            var column = otherPlayerArray[i][0];
+            var row = otherPlayerArray[i][1];
+
+			console.log(this.getTile(column, row, this.board) + ", " + otherPlayer.id);
+            // are the other players ships all hit?
+            if (this.getTile(column, row, this.board) != otherPlayer.boardID) {
+            	console.log("returning false");
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 
@@ -235,6 +252,9 @@ io.on('connection', function(socket) {
         var player1 = clients[playerID];
         var player2 = clients[selectedPlayerID];
 
+        player1.boardID = 3;
+        player2.boardID = 4;
+
         var game = new Game(player1, player2);
         game.initializeBoard();
         game.initializeShips();
@@ -243,19 +263,29 @@ io.on('connection', function(socket) {
         fn(game.dimension.toString());
 
         // send player1's view of board as 2d array to client
-        console.log("over " + player2.getShips());
         socket.emit("initialBoard", player1.getShips());
     });
 
     // this will be emitted with ack, fn is the function we use to ack
     socket.on("playerTappedBoard", function(p1ID, p2ID, column, row, fn) {
+    	var player1 = clients[pID];
+        var player2 = clients[p2ID];
+
         var game = games[p1ID.toString() + p2ID.toString()];
         var validMove = game.checkValidMove(column, row, p1ID);
+        console.log(clients[p2ID].getShips());
 
         if (validMove) {
             game.setTile(column, row, p1ID, game.board);
+
             fn("valid");
             // TODO: if won, emit won
+
+            if (game.won(p1ID)) {
+                //socket.emit("won");
+                var p2Socket = clients[p1ID].socket;
+                p2Socket.emit("won");
+            }
         } else {
             fn("invalid");
         }
