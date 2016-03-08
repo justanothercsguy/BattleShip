@@ -53,7 +53,7 @@ class GameScene: SKScene {
             let touchedTile = self.game_board.tileFromName(touchedNode?.name)
             
             if let tile = touchedTile {
-                Client.sharedInstance.socket.emitWithAck("playerTappedBoard", Client.sharedInstance.id, Client.sharedInstance.otherPlayerID, tile.column, tile.row)(timeoutAfter: 0, callback: {data in
+                Client.sharedInstance.socket.emitWithAck("playerTappedBoard", Client.sharedInstance.id, Client.sharedInstance.otherPlayerID, tile.row, tile.column)(timeoutAfter: 0, callback: {data in
                     // if server returns valid move, let us place the used sprite on that tile
                     if data[0] as! String == "valid" {
                         let usedTileSprite = SKSpriteNode(imageNamed: "hit_sprite")

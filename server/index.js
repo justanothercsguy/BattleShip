@@ -97,7 +97,7 @@ function Game(p1, p2) {
     // Once a game starts, the server will create an empty (full of O's) random size grid (square) 
     // that is not smaller than 8x8 and not larger than 24x24.
     this.initializeBoard = function() {
-        this.dimension = Math.floor((Math.random() * 16) + 8);
+        this.dimension = 8;//;Math.floor((Math.random() * 16) + 8);
 
         for (var i = 0; i < this.dimension; i++) {
             var col = [];
@@ -148,10 +148,12 @@ function Game(p1, p2) {
     }
 
     this.checkValidMove = function(column, row, playerID) {
+    	var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
         var tile = this.getTile(column, row, this.board);
+        console.log(column, ", " + row);
 
         // valid move if the tile is empty or if the tile is a ship of the opposite player
-        return tile == 0 || tile != playerID;
+        return tile == 0 || tile == otherPlayer.boardID;
     }
 
     this.checkHit = function(column, row, playerBoard) {
@@ -163,16 +165,13 @@ function Game(p1, p2) {
     this.won = function(playerID) {
         var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
         var otherPlayerArray = otherPlayer.getShips();
-        console.log(otherPlayerArray.length);
 
         for (var i = 0; i < otherPlayerArray.length; i++) {
             var column = otherPlayerArray[i][0];
             var row = otherPlayerArray[i][1];
 
-			console.log(this.getTile(column, row, this.board) + ", " + otherPlayer.id);
             // are the other players ships all hit?
             if (this.getTile(column, row, this.board) != otherPlayer.boardID) {
-            	console.log("returning false");
                 return false;
             }
         }
@@ -269,9 +268,11 @@ io.on('connection', function(socket) {
     // this will be emitted with ack, fn is the function we use to ack
     socket.on("playerTappedBoard", function(p1ID, p2ID, column, row, fn) {
     	var player1 = clients[p1ID];
+    	var player2 = clients[p2ID];
+    	console.log(player2.getShips());
 
         var game = games[p1ID.toString() + p2ID.toString()];
-        var validMove = game.checkValidMove(column, row, player1.boardID);
+        var validMove = game.checkValidMove(column, row, p1ID);
 
         if (validMove) {
             game.setTile(column, row, player1.boardID, game.board);
