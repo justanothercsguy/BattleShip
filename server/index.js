@@ -252,8 +252,8 @@ io.on('connection', function(socket) {
         var player1 = clients[playerID];
         var player2 = clients[selectedPlayerID];
 
-        player1.boardID = 3;
-        player2.boardID = 4;
+        player1.boardID = 1;
+        player2.boardID = 2;
 
         var game = new Game(player1, player2);
         game.initializeBoard();
@@ -268,7 +268,7 @@ io.on('connection', function(socket) {
 
     // this will be emitted with ack, fn is the function we use to ack
     socket.on("playerTappedBoard", function(p1ID, p2ID, column, row, fn) {
-    	var player1 = clients[pID];
+    	var player1 = clients[p1ID];
 
         var game = games[p1ID.toString() + p2ID.toString()];
         var validMove = game.checkValidMove(column, row, p1ID);
