@@ -50,7 +50,7 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
                 Client.sharedInstance.otherPlayerID = otherPlayerID
                 let storyBoard = UIStoryboard(name: "Main", bundle: nil)
                 let gameVC = storyBoard.instantiateViewControllerWithIdentifier("GameViewController") as! GameViewController
-                gameVC.gameBoardSize = Int(data)
+                Client.sharedInstance.gameboardSize = Int(data)
                 self?.presentViewController(gameVC, animated: true, completion: nil)
             } else {
                 print("error creating game")

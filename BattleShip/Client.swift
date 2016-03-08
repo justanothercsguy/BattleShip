@@ -17,9 +17,8 @@ class Client {
     let socket = SocketIOClient(socketURL: NSURL(string: "http://localhost:3000")!, options: [.Log(false), .ForcePolling(true)])
     var id: Int!
     var otherPlayerID: Int!
-    var gameBoard: GameBoard!
-    var gameScene: GameScene!
     var gameWon = false
+    var gameboardSize: Int!
     
     func setupHandlersAndConnect() {
         self.socket.on("connect") {[weak self] data, ack in

@@ -15,14 +15,13 @@ class GameScene: SKScene {
     var game_board: GameBoard!
     var brushColor = TileColor.Red
     var gameTimer: NSTimer!
-    var gameBoardSize: Int!
     
     override func didMoveToView(view: SKView) {
         // gamescene.sks messes up view, let's fix that
         self.size = view.bounds.size
         
         // add a gameboard to the screen
-        game_board = GameBoard(rows: self.gameBoardSize, columns: self.gameBoardSize, boardWidth: self.size.width, boardHeight: self.size.height)
+        game_board = GameBoard(rows: Client.sharedInstance.gameboardSize, columns: Client.sharedInstance.gameboardSize, boardWidth: self.size.width, boardHeight: self.size.height)
         // add sprites to scene
         for tiles in game_board.tiles {
             for tile in tiles {
@@ -30,9 +29,6 @@ class GameScene: SKScene {
                 self.addChild(tile.sprite!)
             }
         }
-        
-        Client.sharedInstance.gameBoard = self.game_board
-        Client.sharedInstance.gameScene = self
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
