@@ -147,8 +147,6 @@ function Game(p1, p2) {
                 this.p2.ships.push([col, row]);
             }
         }
-        console.log(this.p1.ships)
-        console.log(this.p2.ships)
     }
 
     this.checkValidMove = function(column, row, playerID) {
@@ -168,16 +166,16 @@ function Game(p1, p2) {
 
     this.won = function(playerID) {
         var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
-        var otherPlayerArray = otherPlayer.getShips();
+        var otherPlayerArray = otherPlayer.ships;
         console.log("other length " + otherPlayerArray.length);
 
-        for (var i = 0; i < otherPlayerArray.length / 2; i++) {
-            var column = otherPlayerArray[i][2 * i];
-            var row = otherPlayerArray[i][(2 * i) + 1];
+        for (var i = 0; i < otherPlayerArray.length; i++) {
+            var column = otherPlayerArray[i][0];
+            var row = otherPlayerArray[i][1];
 
 			console.log(this.board[column][row] + ", " + otherPlayer.boardID);
             // are the other players ships all hit?
-            if (this.board[column][row] != otherPlayer.boardID) {
+            if (this.board[column][row] == otherPlayer.boardID) {
                 return false;
             }
         }
