@@ -269,14 +269,12 @@ io.on('connection', function(socket) {
     // this will be emitted with ack, fn is the function we use to ack
     socket.on("playerTappedBoard", function(p1ID, p2ID, column, row, fn) {
     	var player1 = clients[pID];
-        var player2 = clients[p2ID];
 
         var game = games[p1ID.toString() + p2ID.toString()];
         var validMove = game.checkValidMove(column, row, p1ID);
-        console.log(clients[p2ID].getShips());
 
         if (validMove) {
-            game.setTile(column, row, p1ID, game.board);
+            game.setTile(column, row, player1.boardID, game.board);
 
             fn("valid");
             // TODO: if won, emit won
