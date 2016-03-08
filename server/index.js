@@ -97,7 +97,7 @@ function Game(p1, p2) {
     // Once a game starts, the server will create an empty (full of O's) random size grid (square) 
     // that is not smaller than 8x8 and not larger than 24x24.
     this.initializeBoard = function() {
-        this.dimension = 8;//;Math.floor((Math.random() * 16) + 8);
+        this.dimension = 5;//;Math.floor((Math.random() * 16) + 8);
 
         for (var i = 0; i < this.dimension; i++) {
             var col = [];
@@ -125,8 +125,8 @@ function Game(p1, p2) {
             // if we find an empty tile, insert id number for player 1's ship into board, update
             // player1's board, and add coordinates to player 1's array of ships
             if (this.getTile(col, row, this.board) == 0) {
-                this.setTile(col, row, p1.getID(), this.board);
-                this.setTile(col, row, p1.getID(), this.p1_board);
+                this.setTile(col, row, p1.boardID, this.board);
+                this.setTile(col, row, p1.boardID, this.p1_board);
                 this.player1_ship_count++;
                 this.p1.ships.push([col, row]);
             }
@@ -139,8 +139,8 @@ function Game(p1, p2) {
             // if we find an empty tile, insert id number for player 2's ship into board, update
             // player1's board, and add coordinates to player 1's array of ships
             if (this.getTile(col, row, this.board) == 0) {
-                this.setTile(col, row, p2.getID(), this.board);
-                this.setTile(col, row, p2.getID(), this.p2_board);
+                this.setTile(col, row, p2.boardID, this.board);
+                this.setTile(col, row, p2.boardID, this.p2_board);
                 this.player2_ship_count++;
                 this.p2.ships.push([col, row]);
             }
@@ -165,13 +165,15 @@ function Game(p1, p2) {
     this.won = function(playerID) {
         var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
         var otherPlayerArray = otherPlayer.getShips();
+        console.log("other length " + otherPlayerArray.length);
 
-        for (var i = 0; i < otherPlayerArray.length; i++) {
-            var column = otherPlayerArray[i][0];
-            var row = otherPlayerArray[i][1];
+        for (var i = 0; i < otherPlayerArray.length / 2; i++) {
+            var column = otherPlayerArray[i][2 * i];
+            var row = otherPlayerArray[i][(2 * i) + 1];
 
+			console.log(this.board[column][row] + ", " + otherPlayer.boardID);
             // are the other players ships all hit?
-            if (this.getTile(column, row, this.board) != otherPlayer.boardID) {
+            if (this.board[column][row] != otherPlayer.boardID) {
                 return false;
             }
         }
@@ -275,7 +277,8 @@ io.on('connection', function(socket) {
         var validMove = game.checkValidMove(column, row, p1ID);
 
         if (validMove) {
-            game.setTile(column, row, player1.boardID, game.board);
+            game.board[column][row] = player1.boardID;
+            console.log("set " + game.board[column][row]);
 
             fn("valid");
             // TODO: if won, emit won
