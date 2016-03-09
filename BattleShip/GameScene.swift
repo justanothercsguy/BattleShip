@@ -44,6 +44,13 @@ class GameScene: SKScene {
             self.addChild(ship)
         }
         
+        // handle updating gameboard when the other player makes a move
+        Client.sharedInstance.socket.on("otherPlayerMoved") {[weak self] data, ack in
+            let column = String(data[0])
+            let row = String(data[1])
+            
+            self?.drawHitSpriteAt(Int(column)!, row: Int(row)!)
+        }
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -56,13 +63,7 @@ class GameScene: SKScene {
                 Client.sharedInstance.socket.emitWithAck("playerTappedBoard", Client.sharedInstance.id, Client.sharedInstance.otherPlayerID, tile.column, tile.row)(timeoutAfter: 0, callback: {data in
                     // if server returns valid move, let us place the used sprite on that tile
                     if data[0] as! String == "valid" {
-                        let usedTileSprite = SKSpriteNode(imageNamed: "hit_sprite")
-                        usedTileSprite.position = tile.sprite!.position
-                        usedTileSprite.size = tile.sprite!.size
-                        
-                        // shrink to half the size so it fits within a tile
-                        usedTileSprite.setScale(0.5)
-                        self.addChild(usedTileSprite)
+                        self.drawHitSpriteAt(tile.column, row: tile.row)
                     } else {
                         // do something more pretty with the ui later, let mr. wu handle this
                         print("invalid move")
@@ -83,6 +84,18 @@ class GameScene: SKScene {
         let touchedSprite = self.nodeAtPoint(convertedPosition)
         
         return touchedSprite
+    }
+    
+    func drawHitSpriteAt(column: Int, row: Int) {
+        let tile = self.game_board.tileFromName("\(column),\(row)")
+        
+        let usedTileSprite = SKSpriteNode(imageNamed: "hit_sprite")
+        usedTileSprite.position = tile!.sprite!.position
+        usedTileSprite.size = tile!.sprite!.size
+        
+        // shrink to half the size so it fits within a tile
+        usedTileSprite.setScale(0.5)
+        self.addChild(usedTileSprite)
     }
     
     func handleWin(youWon: Bool) {

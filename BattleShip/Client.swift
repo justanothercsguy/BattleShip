@@ -36,7 +36,7 @@ class Client {
             if let gameBoardData = data[0] as? NSDictionary {
                 // go through the message - should be NSArray or NSDictionary
                 for tileCoords in gameBoardData {
-
+                    
                 }
             }
         }
@@ -56,14 +56,9 @@ class Client {
         }
         
         self.socket.on("newGameWithOtherPlayer") {[weak self] data, ack in
-            print(data)
-            if let setupData = data[0] as? NSArray {
-                print(setupData)
-                self?.gameboardSize = setupData[0] as! Int
-                self?.otherPlayerID = setupData[1] as! Int
-            } else {
-                print("fail")
-            }
+            // nothing else seems to work, have to do it this way to get the data out
+            self?.gameboardSize = Int(String(data[0]))
+            self?.otherPlayerID = Int(String(data[1]))
         }
         
         socket.connect()

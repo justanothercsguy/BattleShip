@@ -29,6 +29,12 @@ function Player(id, socket) {
     }
 }
 
+// enum style object to denote empty and occupied tiles
+TileState = {
+	EMPTY: 0,
+	OCCUPIED: 3
+}
+
 // Game class - parameters: player1, player2, board
 function Game(p1, p2) {
 
@@ -37,7 +43,7 @@ function Game(p1, p2) {
     this.currentTurn = 0;
 
     // full game board array
-    // return 0 = empty, 1 = player1's ship, 2 = player2's ship, undefined if outside of board
+    // return 0 = empty, 1 = player1's ship, 2 = player2's ship, 3 = occupied, undefined if outside of board
     this.board = [];
     this.dimension = this.board.length;
 
@@ -142,10 +148,10 @@ function Game(p1, p2) {
 
     this.checkValidMove = function(column, row, playerID) {
     	var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
-        var tile = this.board[column][row];        
+        var tile = this.board[column][row];
 
         // valid move if the tile is empty or if the tile is a ship of the opposite player
-        return tile == 0 || tile == otherPlayer.boardID;
+        return tile == TileState.EMPTY || tile == otherPlayer.boardID;
     }
 
     this.checkHit = function(column, row, playerBoard) {
@@ -259,7 +265,7 @@ io.on('connection', function(socket) {
         fn(game.dimension.toString());
 
         // send size to the other player
-        player2Socket.emit("newGameWithOtherPlayer", [game.dimension.toString(), player1.id]);
+        player2Socket.emit("newGameWithOtherPlayer", game.dimension.toString(), player1.id);
 
         // send player1's view of board as 2d array to client
         socket.emit("initialBoard", player1.getShips());
@@ -273,9 +279,11 @@ io.on('connection', function(socket) {
 
         var game = games[p1ID.toString() + p2ID.toString()];
 
+        if (!game) {
+        	game = games[p2ID.toString() + p1ID.toString()];
+        }
         // make sure it is our turn
         if (game.currentTurn == p2ID) {
-            console.log(game.currentTurn, " and p2ID " + p2ID);
             fn("invalid");
             return;
         }
@@ -283,7 +291,7 @@ io.on('connection', function(socket) {
         var validMove = game.checkValidMove(column, row, p1ID);
 
         if (validMove) {
-            game.board[column][row] = player1.boardID;
+            game.board[column][row] = TileState.OCCUPIED;
 
             // other player's turn
             game.currentTurn = p2ID;
@@ -292,6 +300,9 @@ io.on('connection', function(socket) {
             // TODO: if won, emit won
 
             var p2Socket = clients[p2ID.toString()].socket;
+
+            // send to the other player the move the first player made
+            p2Socket.emit("otherPlayerMoved", column, row);
 
             if (game.won(p1ID)) {
                 socket.emit("won");              
