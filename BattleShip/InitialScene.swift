@@ -12,16 +12,13 @@ class InitialScene: SKScene {
     var newGameButton: SKSpriteNode!
     
     override func didMoveToView(view: SKView) {
-        self.size = view.bounds.size
         
-        self.newGameButton = SKSpriteNode(imageNamed: "blank_tile")
+        self.newGameButton = SKSpriteNode(imageNamed: "play_button")
         self.newGameButton.name = "newGameButton"
-        self.newGameButton.size = CGSize(width: (self.view?.bounds.width)! / 16, height: (self.view?.bounds.height)! / 16)
-        let yPos = (self.size.height - (self.view?.bounds.width)!) / 4
-        let xPos = (self.view?.bounds.width)! / 4
         Client.sharedInstance.setupHandlersAndConnect()
-        
-        self.newGameButton.position = CGPoint(x: xPos, y: yPos)
+        self.newGameButton.xScale = 2
+        self.newGameButton.yScale = 2
+        self.newGameButton.position = CGPointMake(frame.width / 2, frame.height / 2)
         self.addChild(self.newGameButton)
     }
     
