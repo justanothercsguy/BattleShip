@@ -20,7 +20,7 @@ class Client {
     // make this a singleton
     static let sharedInstance = Client()
     
-    let socket = SocketIOClient(socketURL: NSURL(string: "http://localhost:3000")!, options: [.Log(false), .ForcePolling(true)])
+    let socket = SocketIOClient(socketURL: NSURL(string: "http://192.168.1.64:3000")!, options: [.Log(false), .ForcePolling(true)])
     var id: Int!
     var otherPlayerID: Int!
     var gameWon = false
@@ -53,6 +53,17 @@ class Client {
         
         self.socket.on("won") {data, ack in
             print("won")
+        }
+        
+        self.socket.on("newGameWithOtherPlayer") {[weak self] data, ack in
+            print(data)
+            if let setupData = data[0] as? NSArray {
+                print(setupData)
+                self?.gameboardSize = setupData[0] as! Int
+                self?.otherPlayerID = setupData[1] as! Int
+            } else {
+                print("fail")
+            }
         }
         
         socket.connect()

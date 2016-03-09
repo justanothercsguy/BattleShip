@@ -34,9 +34,11 @@ function Game(p1, p2) {
 
     this.p1 = p1;
     this.p2 = p2;
+    this.currentTurn = 0;
 
     // full game board array
-    this.board = []
+    // return 0 = empty, 1 = player1's ship, 2 = player2's ship, undefined if outside of board
+    this.board = [];
     this.dimension = this.board.length;
 
     // two arrays to separate what each player can see in board
@@ -63,28 +65,6 @@ function Game(p1, p2) {
         return this.p2_board;
     }
 
-    this.getBoard = function(player) {
-        if (player.id == this.p1.id) {
-            return this.getPlayer1Board();
-        }
-
-        if (player.id == this.p2.id) {
-            return this.getPlayer2Board();
-        }
-
-        return this.board;
-    }
-
-    // return 0 = empty, 1 = player1's ship, 2 = player2's ship, undefined if outside of board
-    // column is the index of the 2-d board array - 
-    this.getTile = function(col, row, board) {
-        return board[col][row];
-    }
-
-    // add value to specified board (full game, player1's view, or player2's view)
-    this.setTile = function(col, row, value, board) {
-        board[col][row] = value;
-    }
 
     // col, row = 2d coordinates of tile, gives unique values of tiles ranging from 
     // 0 to (dimension^2 - 1) to tell which tiles are empty and available for ship to be placed in
@@ -117,8 +97,6 @@ function Game(p1, p2) {
     // randomly add ships to board - 0 for empty spot, 1 for player 1's ships, 2 for player 2's ship
     // we will implement battleship actual rules later - for now, just add five ships for each player
     this.initializeShips = function() {
-
-		// why are repeating coordinates being printed for player 2
 		
         // add player 1's five ships
         while (this.player1_ship_count < 5) {
@@ -126,11 +104,17 @@ function Game(p1, p2) {
             var row = Math.floor((Math.random() * this.dimension));
             // if we find an empty tile, insert id number for player 1's ship into board, update
             // player1's board, and add coordinates to player 1's array of ships
-            if (this.getTile(col, row, this.board) == 0) {
-                this.setTile(col, row, p1.boardID, this.board);
-                this.setTile(col, row, p1.boardID, this.p1_board);
+            if (this.board[col][row] == 0) {
+                this.board[col][row] =  p1.boardID;
+                this.p1_board[col][row] = p1.boardID;
                 this.player1_ship_count++;
-                this.p1.ships.push([col, row]);
+
+                var coordinate = {
+                    x: col,
+                    y: row
+                };
+
+                this.p1.ships.push(coordinate);
             }
         }
         // add player 2's five ships
@@ -140,19 +124,25 @@ function Game(p1, p2) {
 
             // if we find an empty tile, insert id number for player 2's ship into board, update
             // player1's board, and add coordinates to player 1's array of ships
-            if (this.getTile(col, row, this.board) == 0) {
-                this.setTile(col, row, p2.boardID, this.board);
-                this.setTile(col, row, p2.boardID, this.p2_board);
+            if (this.board[col][row] == 0) {
+                this.board[col][row] =  p2.boardID;
+                this.p1_board[col][row] = p2.boardID;
+
                 this.player2_ship_count++;
-                this.p2.ships.push([col, row]);
+
+                var coordinate = {
+                    x: col,
+                    y: row
+                };
+
+                this.p2.ships.push(coordinate);
             }
         }
     }
 
     this.checkValidMove = function(column, row, playerID) {
     	var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
-        var tile = this.getTile(column, row, this.board);
-        console.log(column, ", " + row);
+        var tile = this.board[column][row];        
 
         // valid move if the tile is empty or if the tile is a ship of the opposite player
         return tile == 0 || tile == otherPlayer.boardID;
@@ -167,13 +157,11 @@ function Game(p1, p2) {
     this.won = function(playerID) {
         var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
         var otherPlayerArray = otherPlayer.ships;
-        console.log("other length " + otherPlayerArray.length);
 
         for (var i = 0; i < otherPlayerArray.length; i++) {
-            var column = otherPlayerArray[i][0];
-            var row = otherPlayerArray[i][1];
+            var column = otherPlayerArray[i].x;
+            var row = otherPlayerArray[i].y
 
-			console.log(this.board[column][row] + ", " + otherPlayer.boardID);
             // are the other players ships all hit?
             if (this.board[column][row] == otherPlayer.boardID) {
                 return false;
@@ -232,11 +220,11 @@ io.on('connection', function(socket) {
     // testing get player list
     //---------------------------------------------
     if (id == 0) {
-        clients[id] = new Player(id, socket);
+        clients[id.toString()] = new Player(id, socket);
         id++;
     }
     //---------------------------------------------
-    clients[id] = new Player(id, socket);
+    clients[id.toString()] = new Player(id, socket);
 
     // send id to client
     socket.emit("clientID", id);
@@ -245,15 +233,15 @@ io.on('connection', function(socket) {
 
     // client wants to find other players
     socket.on("findPlayers", function(playerID, fn) {
-        var otherPlayers = getOtherPlayers(clients[playerID]);
+        var otherPlayers = getOtherPlayers(clients[playerID.toString()]);
         //var otherPlayersJSONString = JSON.stringify(otherPlayers);
         // send the other players
         fn(otherPlayers);
     });
 
     socket.on("selectedPlayer", function(playerID, selectedPlayerID, fn) {
-        var player1 = clients[playerID];
-        var player2 = clients[selectedPlayerID];
+        var player1 = clients[playerID.toString()];
+        var player2 = clients[selectedPlayerID.toString()];
 
         player1.boardID = 1;
         player2.boardID = 2;
@@ -261,34 +249,57 @@ io.on('connection', function(socket) {
         var game = new Game(player1, player2);
         game.initializeBoard();
         game.initializeShips();
+        game.currentTurn = player1.id;
+        
         games[playerID.toString() + selectedPlayerID.toString()] = game;
 
+        var player2Socket = clients[selectedPlayerID.toString()].socket;
+
+        // send size to this player
         fn(game.dimension.toString());
+
+        // send size to the other player
+        player2Socket.emit("newGameWithOtherPlayer", [game.dimension.toString(), player1.id]);
 
         // send player1's view of board as 2d array to client
         socket.emit("initialBoard", player1.getShips());
+        player2Socket.emit("initialBoard", player2.getShips());
     });
 
     // this will be emitted with ack, fn is the function we use to ack
     socket.on("playerTappedBoard", function(p1ID, p2ID, column, row, fn) {
-    	var player1 = clients[p1ID];
-    	var player2 = clients[p2ID];
-    	console.log(player2.getShips());
+    	var player1 = clients[p1ID.toString()];
+    	var player2 = clients[p2ID.toString()];
 
         var game = games[p1ID.toString() + p2ID.toString()];
+
+        // make sure it is our turn
+        if (game.currentTurn == p2ID) {
+            console.log(game.currentTurn, " and p2ID " + p2ID);
+            fn("invalid");
+            return;
+        }
+
         var validMove = game.checkValidMove(column, row, p1ID);
 
         if (validMove) {
             game.board[column][row] = player1.boardID;
-            console.log("set " + game.board[column][row]);
+
+            // other player's turn
+            game.currentTurn = p2ID;
 
             fn("valid");
             // TODO: if won, emit won
 
+            var p2Socket = clients[p2ID.toString()].socket;
+
             if (game.won(p1ID)) {
-                //socket.emit("won");
-                var p2Socket = clients[p1ID].socket;
+                socket.emit("won");              
+                p2Socket.emit("lost");
+            } else if(game.won(p2ID)) {
+                socket.emit("lost");              
                 p2Socket.emit("won");
+
             }
         } else {
             fn("invalid");

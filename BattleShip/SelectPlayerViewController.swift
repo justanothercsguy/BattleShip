@@ -24,11 +24,11 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
             if let data = data[0] as? NSArray {
                 // iterate through NSArray to get [col, row] data and add Coordinates(row, col) to shipsArray
                 for index in 0...data.count - 1 {
-                    let coordinateArray: NSArray = data[index] as! NSArray
-                    let col = coordinateArray[0] as! Int
-                    let row = coordinateArray[1] as! Int
+                    let coordinateArray = data[index] as! NSDictionary
+                    let col = coordinateArray["x"] as! Int
+                    let row = coordinateArray["y"] as! Int
                     
-                    let newCoordinate = Coordinates(xCoord: row, yCoord: col)
+                    let newCoordinate = Coordinates(xCoord: col, yCoord: row)
                     Client.sharedInstance.shipsArray.append(newCoordinate)
                     // print(newCoordinate)
                 }
