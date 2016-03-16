@@ -15,10 +15,23 @@ class GameScene: SKScene {
     var game_board: GameBoard!
     var brushColor = TileColor.Red
     var gameTimer: NSTimer!
+    var vc: GameViewController!
     
     override func didMoveToView(view: SKView) {
         // gamescene.sks messes up view, let's fix that
         self.size = view.bounds.size
+        
+        Client.sharedInstance.socket.on("won") {[weak self] data, ack in
+            if let did_win = data[0] as? Int {
+                print(did_win)
+                
+                let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+                let endScreenVC = storyBoard.instantiateViewControllerWithIdentifier("EndScreenViewController") as! EndScreenViewController
+                self?.vc.presentViewController(endScreenVC, animated: true, completion: nil)
+            } else {
+                print("fail if let")
+            }
+        }
         
         // add a gameboard to the screen
         game_board = GameBoard(rows: Client.sharedInstance.gameboardSize, columns: Client.sharedInstance.gameboardSize, boardWidth: self.size.width, boardHeight: self.size.height)

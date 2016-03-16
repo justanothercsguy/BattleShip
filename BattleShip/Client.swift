@@ -21,7 +21,7 @@ class Client {
     static let sharedInstance = Client()
     
     // change 192.168.1.64 to your local ip address
-    let socket = SocketIOClient(socketURL: NSURL(string: "http://192.168.1.64:3000")!, options: [.Log(false), .ForcePolling(true)])
+    let socket = SocketIOClient(socketURL: NSURL(string: "http://10.221.113.153:3000")!, options: [.Log(false), .ForcePolling(true)])
     var id: Int!
     var otherPlayerID: Int!
     var gameWon = false
@@ -42,19 +42,16 @@ class Client {
             }
         }
         
-        self.socket.on("gameWon") {data, ack in
-            
-        }
-        
         self.socket.on("clientID") {[weak self] data, ack in
             if let id = data[0] as? Int {
                 self?.id = id
             }
         }
-        
+        /*
         self.socket.on("won") {data, ack in
             print("won")
         }
+*/
         
         self.socket.on("newGameWithOtherPlayer") {[weak self] data, ack in
             // nothing else seems to work, have to do it this way to get the data out

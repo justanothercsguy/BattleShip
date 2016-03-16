@@ -19,6 +19,7 @@
 		1C8C79E11C8E186C00B52468 /* InitialSceneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C8C79E01C8E186C00B52468 /* InitialSceneViewController.swift */; };
 		7A30FB901C8929DC00608D4F /* SocketIOClientSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A30FB8D1C89294F00608D4F /* SocketIOClientSwift.framework */; };
 		7A30FB911C8929DC00608D4F /* SocketIOClientSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7A30FB8D1C89294F00608D4F /* SocketIOClientSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		7AA20AE61C99B575001266F8 /* EndScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA20AE51C99B575001266F8 /* EndScreenViewController.swift */; };
 		7AAEAFCA1C88E0BD0007C971 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AAEAFC91C88E0BD0007C971 /* AppDelegate.swift */; };
 		7AAEAFCC1C88E0BD0007C971 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AAEAFCB1C88E0BD0007C971 /* GameViewController.swift */; };
 		7AAEAFCF1C88E0BD0007C971 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7AAEAFCD1C88E0BD0007C971 /* Main.storyboard */; };
@@ -84,6 +85,7 @@
 		1C8C79DE1C8DF1D900B52468 /* SelectPlayerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectPlayerViewController.swift; sourceTree = "<group>"; };
 		1C8C79E01C8E186C00B52468 /* InitialSceneViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitialSceneViewController.swift; sourceTree = "<group>"; };
 		7A30FB851C89294F00608D4F /* Pods.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Pods.xcodeproj; path = Pods/Pods.xcodeproj; sourceTree = "<group>"; };
+		7AA20AE51C99B575001266F8 /* EndScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndScreenViewController.swift; sourceTree = "<group>"; };
 		7AAEAFC61C88E0BD0007C971 /* BattleShip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BattleShip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7AAEAFC91C88E0BD0007C971 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AAEAFCB1C88E0BD0007C971 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
@@ -152,6 +154,7 @@
 				7AF847FB1C8B6B3500AC64E7 /* Client.swift */,
 				1C8C79DE1C8DF1D900B52468 /* SelectPlayerViewController.swift */,
 				1C8C79E01C8E186C00B52468 /* InitialSceneViewController.swift */,
+				7AA20AE51C99B575001266F8 /* EndScreenViewController.swift */,
 			);
 			path = BattleShip;
 			sourceTree = "<group>";
@@ -191,7 +194,7 @@
 				TargetAttributes = {
 					7AAEAFC51C88E0BD0007C971 = {
 						CreatedOnToolsVersion = 7.2;
-						DevelopmentTeam = W9467H5UVT;
+						DevelopmentTeam = SRJK23Z86C;
 					};
 				};
 			};
@@ -264,6 +267,7 @@
 				1C8C79E11C8E186C00B52468 /* InitialSceneViewController.swift in Sources */,
 				7AAEAFCC1C88E0BD0007C971 /* GameViewController.swift in Sources */,
 				1C33FAE01C8D02DE008714CB /* GameFinishedScene.swift in Sources */,
+				7AA20AE61C99B575001266F8 /* EndScreenViewController.swift in Sources */,
 				1C2D7BB61C8B6F1C00E56966 /* Tile.swift in Sources */,
 				7AAEAFCA1C88E0BD0007C971 /* AppDelegate.swift in Sources */,
 				7AF847FC1C8B6B3500AC64E7 /* Client.swift in Sources */,
@@ -398,7 +402,7 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = BattleShip/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "Zishi-Wu.BattleShip";
+				PRODUCT_BUNDLE_IDENTIFIER = Zishi.Wu.BattleShip;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};
@@ -414,7 +418,7 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = BattleShip/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "Zishi-Wu.BattleShip";
+				PRODUCT_BUNDLE_IDENTIFIER = Zishi.Wu.BattleShip;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};
