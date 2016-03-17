@@ -22,15 +22,21 @@ class GameScene: SKScene {
         self.size = view.bounds.size
         
         Client.sharedInstance.socket.on("won") {[weak self] data, ack in
+            
+            let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+            let endScreenVC = storyBoard.instantiateViewControllerWithIdentifier("EndScreenViewController") as! EndScreenViewController
+            
             if let did_win = data[0] as? Int {
-                print(did_win)
-                
-                let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-                let endScreenVC = storyBoard.instantiateViewControllerWithIdentifier("EndScreenViewController") as! EndScreenViewController
-                self?.vc.presentViewController(endScreenVC, animated: true, completion: nil)
+                // print(did_win)
+                if did_win == 1 {
+                    endScreenVC.string = "You Won!"
+                } else {
+                    endScreenVC.string = "You Lost!"
+                }
             } else {
-                print("fail if let")
+                print("failed to get data")
             }
+            self?.vc.presentViewController(endScreenVC, animated: true, completion: nil)
         }
         
         // add a gameboard to the screen

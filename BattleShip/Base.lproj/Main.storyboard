@@ -88,8 +88,26 @@
                     <view key="view" contentMode="scaleToFill" id="brF-wq-WpB">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lnf-YO-tez">
+                                <rect key="frame" x="153" y="133" width="295" height="104"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="BLANK!">
+                                        <attributes>
+                                            <color key="NSColor" red="1" green="0.82254491773787053" blue="0.12743183919512668" alpha="1" colorSpace="calibratedRGB"/>
+                                            <font key="NSFont" size="50" name="Chalkduster"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <color key="highlightedColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
+                    <connections>
+                        <outlet property="end_message" destination="Lnf-YO-tez" id="lFG-Xi-0AQ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ehc-nC-7gm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

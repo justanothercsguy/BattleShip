@@ -10,10 +10,14 @@ import UIKit
 
 class EndScreenViewController: UIViewController {
 
+    var string: String!
+    @IBOutlet weak var end_message: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        self.end_message.text = string
     }
 
     override func didReceiveMemoryWarning() {

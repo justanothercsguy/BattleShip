@@ -278,8 +278,7 @@ io.on('connection', function(socket) {
     	var player1 = clients[p1ID.toString()];
     	var player2 = clients[p2ID.toString()];
     	
-    	// test game_won message by immediately sending won message to client
-    	
+    	// test game_won message by immediately sending won message to client  	
     	socket.emit("won", 1);
     	console.log("emit socket 1");
       var player2Socket = clients[p2ID.toString()].socket;
