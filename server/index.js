@@ -275,12 +275,21 @@ io.on('connection', function(socket) {
         // send player1's view of board as 2d array to client
         socket.emit("initialBoard", player1.getShips());
         player2Socket.emit("initialBoard", player2.getShips());
+        
     });
 
     // this will be emitted with ack, fn is the function we use to ack
     socket.on("playerTappedBoard", function(p1ID, p2ID, column, row, fn) {
     	var player1 = clients[p1ID.toString()];
     	var player2 = clients[p2ID.toString()];
+    	
+    	// test game_won message by immediately sending won message to client  	
+    	socket.emit("won", 1);
+    	console.log("emit socket 1");
+      var player2Socket = clients[p2ID.toString()].socket;
+      player2Socket.emit("lost", 0);
+      console.log("emit socket 2");
+      
 
         var game = games[p1ID.toString() + p2ID.toString()];
 
@@ -310,11 +319,11 @@ io.on('connection', function(socket) {
             p2Socket.emit("otherPlayerMoved", column, row);
 
             if (game.won(p1ID)) {
-                socket.emit("won");              
-                p2Socket.emit("lost");
+                socket.emit("won", 1);              
+                p2Socket.emit("lost", 0);
             } else if(game.won(p2ID)) {
-                socket.emit("lost");              
-                p2Socket.emit("won");
+                socket.emit("lost", 0);              
+                p2Socket.emit("won", 1);
 
             }
         } else {
