@@ -20,6 +20,16 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
         self.playerTableView.delegate = self
         self.playerTableView.dataSource = self
         
+        Client.sharedInstance.socket.on("availablePlayers") {[weak self]data, ack in
+            if let players = data[0] as? NSArray {
+                // add data to table view controller
+                self?.players = players
+                self?.playerTableView.reloadData()
+            } else {
+                print("fail")
+            }
+        }
+        
         Client.sharedInstance.socket.on("initialBoard") {[weak self]data, ack in
             if let data = data[0] as? NSArray {
                 // iterate through NSArray to get [col, row] data and add Coordinates(row, col) to shipsArray

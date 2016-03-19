@@ -235,6 +235,11 @@ io.on('connection', function(socket) {
     // send id to client
     socket.emit("clientID", id);
 
+    // broadcast all clients to those that are in the select player view controller
+    var otherPlayers = getOtherPlayers(clients[id.toString()]);
+    socket.broadcast.emit("availablePlayers", otherPlayers);
+    console.log("emitted");
+
     id++;
 
     // client wants to find other players
