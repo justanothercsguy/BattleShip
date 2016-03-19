@@ -38,7 +38,14 @@ class InitialScene: SKScene {
                         let selectPlayerVC = storyBoard.instantiateViewControllerWithIdentifier("SelectPlayerViewController") as! SelectPlayerViewController
                         
                         // add data to table view controller
-                        selectPlayerVC.players = players
+                        let otherPlayers = NSMutableArray()
+                        for player in players {
+                            if player as! Int != Client.sharedInstance.id {
+                                otherPlayers.addObject(player)
+                            }
+                        }
+
+                        selectPlayerVC.players = otherPlayers.copy() as! NSArray
                         vc?.presentViewController(selectPlayerVC, animated: true, completion: nil)
                     } else {
                         print("fail")

@@ -195,6 +195,8 @@ gameStart - send back to each client participating in the game the size of the g
 
 // dictionary of players
 var clients = {};
+// socket to player dictionary
+var socketToPlayer = {};
 
 // id of players - large numbers mean player logged in later
 var id = 0;
@@ -217,6 +219,16 @@ var getOtherPlayers = function(player) {
     return otherPlayers;
 }
 
+function getAllPlayers() {
+	var players = [];
+
+	for (var key in clients) {
+		players.push(clients[key].id);
+	}
+
+	return players;
+}
+
 //var requestPlayer = function()
 
 // if a player connects to server, add player to clients array and increment id for next player
@@ -230,24 +242,31 @@ io.on('connection', function(socket) {
         id++;
     }
     //---------------------------------------------
-    clients[id.toString()] = new Player(id, socket);
+    var player = new Player(id, socket);
+    clients[id.toString()] = player;
+    socketToPlayer[socket] = player;
 
     // send id to client
     socket.emit("clientID", id);
 
     // broadcast all clients to those that are in the select player view controller
-    var otherPlayers = getOtherPlayers(clients[id.toString()]);
-    socket.broadcast.emit("availablePlayers", otherPlayers);
-    console.log("emitted");
+    socket.broadcast.emit("availablePlayers", getAllPlayers());
 
     id++;
 
+	socket.on("disconnect", function() {
+		console.log("a user disconnected");
+		var currentPlayer = socketToPlayer[socket];
+		delete clients[currentPlayer.id.toString()];
+
+		socket.broadcast.emit("availablePlayers", getAllPlayers());
+	});
+
     // client wants to find other players
     socket.on("findPlayers", function(playerID, fn) {
-        var otherPlayers = getOtherPlayers(clients[playerID.toString()]);
         //var otherPlayersJSONString = JSON.stringify(otherPlayers);
         // send the other players
-        fn(otherPlayers);
+        fn(getAllPlayers());
     });
 
     socket.on("selectedPlayer", function(playerID, selectedPlayerID, fn) {

@@ -23,7 +23,13 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
         Client.sharedInstance.socket.on("availablePlayers") {[weak self]data, ack in
             if let players = data[0] as? NSArray {
                 // add data to table view controller
-                self?.players = players
+                let otherPlayers = NSMutableArray()
+                for player in players {
+                    if player as! Int != Client.sharedInstance.id {
+                        otherPlayers.addObject(player)
+                    }
+                }
+                self?.players = otherPlayers.copy() as! NSArray
                 self?.playerTableView.reloadData()
             } else {
                 print("fail")
