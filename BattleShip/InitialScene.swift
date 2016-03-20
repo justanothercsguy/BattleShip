@@ -66,15 +66,15 @@ class InitialScene: SKScene {
                         if let players = data[0] as? NSArray {
                             let vc = self?.view?.window?.rootViewController
                             let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-                            let selectPlayerVC = storyBoard.instantiateViewControllerWithIdentifier("SelectPlayerViewController") as! SelectPlayerViewController
+                            let selectPlayerVC = storyBoard.instantiateViewControllerWithIdentifier("SelectGameViewController") as! SelectGameViewController
                             
                             // add data to table view controller
-                            let otherPlayers = NSMutableArray()
+                            let games = NSMutableArray()
                             for player in players {
-                                otherPlayers.addObject(player)
+                                games.addObject(player)
                             }
                             
-                            selectPlayerVC.players = otherPlayers.copy() as! NSArray
+                            selectPlayerVC.games = games.copy() as! NSArray
                             vc?.presentViewController(selectPlayerVC, animated: true, completion: nil)
                         } else {
                             print("fail")

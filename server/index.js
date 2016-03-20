@@ -235,10 +235,8 @@ function getAllGames() {
     var allGames = [];
 
     for (var key in games) {
-        allGames.push(games[key].p1.id.toString() + games[key].p2.id.toString());
+        allGames.push(games[key].p1.id.toString() + ":" + games[key].p2.id.toString());
     }
-
-    console.log(allGames);
 
     return allGames;
 }

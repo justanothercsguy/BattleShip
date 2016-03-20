@@ -77,6 +77,43 @@
             </objects>
             <point key="canvasLocation" x="1211" y="370"/>
         </scene>
+        <!--Select Game View Controller-->
+        <scene sceneID="pqJ-6A-MZZ">
+            <objects>
+                <viewController storyboardIdentifier="SelectGameViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="O8i-9M-YBF" customClass="SelectGameViewController" customModule="BattleShip" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="PhM-ly-rJl"/>
+                        <viewControllerLayoutGuide type="bottom" id="W45-ir-tD4"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="iwy-GV-jew">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="HJh-SC-UUT">
+                                <rect key="frame" x="0.0" y="15" width="600" height="585"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" id="Ouh-xm-rxw">
+                                        <rect key="frame" x="0.0" y="28" width="600" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ouh-xm-rxw" id="lhh-8h-fgP">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <outlet property="gamesTableView" destination="HJh-SC-UUT" id="SZh-Jo-cOL"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="JDn-5A-R7x" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1861" y="370"/>
+        </scene>
         <!--End Screen View Controller-->
         <scene sceneID="bxC-0c-8bi">
             <objects>
@@ -111,7 +148,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ehc-nC-7gm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1854" y="370"/>
+            <point key="canvasLocation" x="2527" y="370"/>
         </scene>
     </scenes>
 </document>
