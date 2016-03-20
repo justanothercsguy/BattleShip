@@ -1,35 +1,41 @@
 //
-//  GameViewController.swift
-//  Vectors
+//  InitialSceneViewController.swift
+//  BattleShip
 //
-//  Created by Zishi Wu on 2/11/16.
-//  Copyright (c) 2016 Zishi Wu. All rights reserved.
+//  Created by fery3 on 3/7/16.
+//  Copyright © 2016 Zishi Wu. All rights reserved.
 //
 
 import UIKit
 import SpriteKit
 
-class GameViewController: UIViewController {
-    
+class InitialSceneViewController: UIViewController {
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if let scene = GameScene(fileNamed:"GameScene") {
+
+        // Do any additional setup after loading the view.
+        if let scene = InitialScene(fileNamed:"InitialScene") {
             // Configure the view.
             let skView = self.view as! SKView
             skView.showsFPS = true
             skView.showsNodeCount = true
-            scene.vc = self
             
             /* Sprite Kit applies additional optimizations to improve rendering performance */
-            skView.ignoresSiblingOrder = false
+            skView.ignoresSiblingOrder = true
             
             /* Set the scale mode to scale to fit the window */
             scene.scaleMode = .AspectFill
+            
             skView.presentScene(scene)
         } else {
             print("nil")
         }
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
     
     override func shouldAutorotate() -> Bool {
@@ -44,12 +50,17 @@ class GameViewController: UIViewController {
         }
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Release any cached data, images, etc that aren't in use.
-    }
-    
     override func prefersStatusBarHidden() -> Bool {
         return true
     }
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
+    }
+    */
+
 }

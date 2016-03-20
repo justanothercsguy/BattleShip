@@ -8,39 +8,55 @@
 
 import Foundation
 import SocketIOClientSwift
+import SpriteKit
+
+// to hold data that the server gives back
+struct Coordinates {
+    var xCoord: Int!
+    var yCoord: Int!
+}
 
 class Client {
-    let socket = SocketIOClient(socketURL: NSURL(string: "http://localhost:3000")!, options: [.Log(false), .ForcePolling(true)])
-    var id: Int!
-    var gameBoard: GameBoard
-    var gameScene: GameScene
-    var gameWon = false
+    // make this a singleton
+    static let sharedInstance = Client()
     
-    init(gameBoard: GameBoard, gameScene: GameScene) {
-        self.gameBoard = gameBoard
-        self.gameScene = gameScene
-    }
+    // change 192.168.1.64 to your local ip address
+    let socket = SocketIOClient(socketURL: NSURL(string: "http://192.168.1.5:3000")!, options: [.Log(false), .ForcePolling(true)])
+    var id: Int!
+    var otherPlayerID: Int!
+    var gameWon = false
+    var gameboardSize: Int!
+    var shipsArray = [Coordinates]()
     
     func setupHandlersAndConnect() {
         self.socket.on("connect") {[weak self] data, ack in
             print("socket connected")
-            
-            if let id = data[0] as? Int {
-                self?.id = id
-            }
         }
         
         self.socket.on("updateGameBoard") {[weak self] data, ack in
             if let gameBoardData = data[0] as? NSDictionary {
-                // go through the message and use it to update the gameboard
+                // go through the message - should be NSArray or NSDictionary
                 for tileCoords in gameBoardData {
-
+                    
                 }
             }
         }
         
-        self.socket.on("gameWon") {data, ack in
-            
+        self.socket.on("clientID") {[weak self] data, ack in
+            if let id = data[0] as? Int {
+                self?.id = id
+            }
+        }
+        /*
+        self.socket.on("won") {data, ack in
+            print("won")
+        }
+*/
+        
+        self.socket.on("newGameWithOtherPlayer") {[weak self] data, ack in
+            // nothing else seems to work, have to do it this way to get the data out
+            self?.gameboardSize = Int(String(data[0]))
+            self?.otherPlayerID = Int(String(data[1]))
         }
         
         socket.connect()

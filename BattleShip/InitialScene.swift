@@ -10,20 +10,79 @@ import SpriteKit
 
 class InitialScene: SKScene {
     var newGameButton: SKSpriteNode!
+    var observerButton: SKSpriteNode!
     
     override func didMoveToView(view: SKView) {
-        self.size = view.bounds.size
         
-        self.newGameButton = SKSpriteNode(imageNamed: "blank_tile")
-        self.newGameButton.size = CGSize(width: (self.view?.bounds.width)! / 16, height: (self.view?.bounds.height)! / 16)
-        let yPos = (self.size.height - (self.view?.bounds.width)!) / 4
-        let xPos = (self.view?.bounds.width)! / 4
-        self.newGameButton.position = CGPoint(x: xPos, y: yPos)
+        self.newGameButton = SKSpriteNode(imageNamed: "play_button")
+        self.observerButton = SKSpriteNode(imageNamed: "play_button")
+        self.newGameButton.name = "newGameButton"
+        self.observerButton.name = "observerButton"
+        Client.sharedInstance.setupHandlersAndConnect()
+        self.newGameButton.xScale = 2
+        self.newGameButton.yScale = 2
+        self.observerButton.xScale = 2
+        self.observerButton.yScale = 2
+        self.newGameButton.position = CGPointMake(frame.width / 2, frame.height / 2)
+        self.observerButton.position = CGPointMake(frame.width / 4, frame.height / 4)
         self.addChild(self.newGameButton)
+        self.addChild(self.observerButton)
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         /* Called when a touch begins */
+        for touch in touches {
+            let touchedNode = self.getTouchedNode(touch.locationInView(self.view))
+            
+            // touched button, so show new game scene
+            if let button = touchedNode {
+                if button.name == "newGameButton" {
+                    Client.sharedInstance.socket.emitWithAck("findPlayers", Client.sharedInstance.id)(timeoutAfter: 0, callback: {[weak self] data in
+                        //self?.client.socket.emit("selectedPlayer", (self?.client)!.id, 2)
+                        
+                        if let players = data[0] as? NSArray {
+                            let vc = self?.view?.window?.rootViewController
+                            let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+                            let selectPlayerVC = storyBoard.instantiateViewControllerWithIdentifier("SelectPlayerViewController") as! SelectPlayerViewController
+                            
+                            // add data to table view controller
+                            let otherPlayers = NSMutableArray()
+                            for player in players {
+                                if player as! Int != Client.sharedInstance.id {
+                                    otherPlayers.addObject(player)
+                                }
+                            }
+                            
+                            selectPlayerVC.players = otherPlayers.copy() as! NSArray
+                            vc?.presentViewController(selectPlayerVC, animated: true, completion: nil)
+                        } else {
+                            print("fail")
+                        }
+                    })
+                } else if button.name == "observerButton" {
+                    Client.sharedInstance.socket.emitWithAck("findGames", Client.sharedInstance.id)(timeoutAfter: 0, callback: {[weak self] data in
+                        //self?.client.socket.emit("selectedPlayer", (self?.client)!.id, 2)
+                        
+                        if let players = data[0] as? NSArray {
+                            let vc = self?.view?.window?.rootViewController
+                            let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+                            let selectPlayerVC = storyBoard.instantiateViewControllerWithIdentifier("SelectGameViewController") as! SelectGameViewController
+                            
+                            // add data to table view controller
+                            let games = NSMutableArray()
+                            for player in players {
+                                games.addObject(player)
+                            }
+                            
+                            selectPlayerVC.games = games.copy() as! NSArray
+                            vc?.presentViewController(selectPlayerVC, animated: true, completion: nil)
+                        } else {
+                            print("fail")
+                        }
+                    })
+                }
+            }
+        }
     }
     
     override func update(currentTime: CFTimeInterval) {

@@ -16,12 +16,6 @@ class GameBoard {
         
         let board_scene_ratio = 0.75
         
-        // Bottom (y = 0) so put board start at top
-        print("Board Height: \(boardHeight)")
-        
-        // Left (x = 0) so put board start at left
-        print("Board Width: \(boardWidth)")
-        
         // make gameboard square
         let boardDimension: CGFloat
         if (boardWidth < boardHeight) {
@@ -33,8 +27,6 @@ class GameBoard {
         // Adjust tileSprite size to fit into 75% of the board depending on number of tiles
         let spriteHeight = CGFloat(board_scene_ratio) * boardDimension / CGFloat(columns)
         let spriteWidth = CGFloat(board_scene_ratio) * boardDimension / CGFloat(rows)
-        print("Space Height: \(spriteHeight)")
-        print("Space Width: \(spriteWidth)")
         
         // initialize coordinates for center of each tile in board in CGFloat type
         // coordinates for center of each tile in double to be converted to CGFloat
@@ -73,10 +65,10 @@ class GameBoard {
                 let position = CGPointMake(xCoord, yCoord)
                 let size = CGSizeMake(spriteWidth, spriteHeight)
                 // name = row, column to identify sprite at specific location
-                let tileName = String(column) + ", " + String(row)
+                let tileName = String(row) + "," + String(column)
                 
                 // add a new tile to specific row, column
-                let newTile = Tile(column: column, row: row, spritePosition: position, spriteSize: size, spriteName: tileName)
+                let newTile = Tile(column: row, row: column, spritePosition: position, spriteSize: size, spriteName: tileName)
                 tiles[column].append(newTile)
             }
         }
@@ -90,10 +82,9 @@ class GameBoard {
     func tileFromName(tileName: String?) -> Tile? {
         if let name = tileName {
             // no way to access character at index in swift see: https://www.reddit.com/r/swift/comments/2bvrh9/getting_a_specific_character_in_a_string/
-            let colIndex = name.startIndex.advancedBy(0)
-            let rowIndex = name.startIndex.advancedBy(3)
-            let row = Int(String(name[rowIndex]))!
-            let column = Int(String(name[colIndex]))!
+            let coords = name.characters.split{$0 == ","}.map(String.init)
+            let row = Int(String(coords[0]))!
+            let column = Int(String(coords[1]))!
             
             return tiles[column][row]
         }
