@@ -154,10 +154,12 @@ function Game(p1, p2) {
         return tile == TileState.EMPTY || tile == otherPlayer.boardID;
     }
 
-    this.checkHit = function(column, row, playerBoard) {
+    this.checkHit = function(column, row, playerID) {
         var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
+        var tile = this.board[column][row];
 
-        return this.getBoard()[column][row] == otherPlayer.id;
+        // hit if the tile is a ship of the opposite player
+        return tile == otherPlayer.boardID;
     }
 
     this.won = function(playerID) {
@@ -318,64 +320,59 @@ io.on('connection', function(socket) {
 
     // this will be emitted with ack, fn is the function we use to ack
     socket.on("playerTappedBoard", function(p1ID, p2ID, column, row, fn) {
-    	var player1 = clients[p1ID.toString()];
-    	var player2 = clients[p2ID.toString()];
-    	
-    	/*
-    	// test game_won message by immediately sending won message to client  	
-    	socket.emit("won", 1);
-    	console.log("emit socket 1");
+        var player1 = clients[p1ID.toString()];
+        var player2 = clients[p2ID.toString()];
+
+        /*
+        // test game_won message by immediately sending won message to client   
+        socket.emit("won", 1);
+        console.log("emit socket 1");
       var player2Socket = clients[p2ID.toString()].socket;
       player2Socket.emit("lost", 0);
       console.log("emit socket 2");
       */
 
-      var game = games[p1ID.toString() + p2ID.toString()];
+        var game = games[p1ID.toString() + p2ID.toString()];
 
-      if (!game) {
-        game = games[p2ID.toString() + p1ID.toString()];
-      }
-      // make sure it is our turn
-      if (game.currentTurn == p2ID) {
-        fn("invalid");
-        return;
-      }
-
-      var validMove = game.checkValidMove(column, row, p1ID);
-
-      if (validMove) {
-        // emit if player hit enemy ship or not - this is the code i dont know
-        // why only the first ship in player2 (opponent)'s ship array gets read
-        for (var i = 0; i < player2.ships.length; i++) {
-        	if (player2.ships[i].x == row && player2.ships[i].y == column) {
-        		console.log("Hit! row: " + row + ", col: " + column);
-        	} 
-					else {
-						console.log("Miss! row: " + row + ", col: " + column);
-					}
-				}		
-        game.board[column][row] = TileState.OCCUPIED;
-            
-        // other player's turn
-        game.currentTurn = p2ID;
-
-        fn("valid");
-        var p2Socket = clients[p2ID.toString()].socket;
-
-        // send to the other player the move the first player made
-        p2Socket.emit("otherPlayerMoved", column, row);
-
-        if (game.won(p1ID)) {
-          socket.emit("won", 1);              
-          p2Socket.emit("lost", 0);
-        } else if(game.won(p2ID)) {
-          socket.emit("lost", 0);              
-          p2Socket.emit("won", 1);
+        if (!game) {
+            game = games[p2ID.toString() + p1ID.toString()];
         }
-      	}	else {
-          fn("invalid");
+        // make sure it is our turn
+        if (game.currentTurn == p2ID) {
+            fn("invalid");
+            return;
         }
-  	});
+
+        var validMove = game.checkValidMove(column, row, p1ID);
+
+        if (validMove) {
+            if (game.checkHit(column, row, p1ID)) {
+                console.log("hit");
+            } else {
+                console.log("not hit");
+            }
+            game.board[column][row] = TileState.OCCUPIED;
+
+            // other player's turn
+            game.currentTurn = p2ID;
+
+            fn("valid");
+            var p2Socket = clients[p2ID.toString()].socket;
+
+            // send to the other player the move the first player made
+            p2Socket.emit("otherPlayerMoved", column, row);
+
+            if (game.won(p1ID)) {
+                socket.emit("won", 1);
+                p2Socket.emit("lost", 0);
+            } else if (game.won(p2ID)) {
+                socket.emit("lost", 0);
+                p2Socket.emit("won", 1);
+            }
+        } else {
+            fn("invalid");
+        }
+    });
 });
 
 http.listen(3000, function() {
