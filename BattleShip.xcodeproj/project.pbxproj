@@ -194,7 +194,7 @@
 				TargetAttributes = {
 					7AAEAFC51C88E0BD0007C971 = {
 						CreatedOnToolsVersion = 7.2;
-						DevelopmentTeam = W9467H5UVT;
+						DevelopmentTeam = SRJK23Z86C;
 					};
 				};
 			};
@@ -402,7 +402,7 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = BattleShip/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "Zishi-Wu.BattleShip";
+				PRODUCT_BUNDLE_IDENTIFIER = Zishi.Wu.BattleShip;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};
@@ -418,7 +418,7 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = BattleShip/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "Zishi-Wu.BattleShip";
+				PRODUCT_BUNDLE_IDENTIFIER = Zishi.Wu.BattleShip;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};
