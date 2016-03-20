@@ -16,10 +16,32 @@ class GameScene: SKScene {
     var brushColor = TileColor.Red
     var gameTimer: NSTimer!
     var vc: GameViewController!
+    var myLabel: SKLabelNode!
     
     override func didMoveToView(view: SKView) {
         // gamescene.sks messes up view, let's fix that
         self.size = view.bounds.size
+        
+        // check's if player hit or miss
+        Client.sharedInstance.socket.on("hitOrMiss") {[weak self] data, ack in
+            
+            if let did_hit = data[0] as? Int {
+                /*
+                self!.label = UILabel(frame: CGRectMake(0, 0, 200, 30))
+                self!.label.center = CGPointMake(self!.frame.size.width / 2, self!.frame.size.height / 4)
+                self!.label.textAlignment = NSTextAlignment.Center
+                */
+                if did_hit == 1 {
+                    self!.myLabel.text = "Hit!"
+                    print("hit")
+                } else {
+                    self!.myLabel.text = "Miss!"
+                }
+                
+            } else {
+                print("failed to get hit or miss message")
+            }
+        }
         
         Client.sharedInstance.socket.on("won") {[weak self] data, ack in
             
@@ -29,9 +51,9 @@ class GameScene: SKScene {
             if let did_win = data[0] as? Int {
                 // print(did_win)
                 if did_win == 1 {
-                    endScreenVC.string = "You Won!"
+                    endScreenVC.string = "Won!"
                 } else {
-                    endScreenVC.string = "You Lost!"
+                    endScreenVC.string = "Lost!"
                 }
             } else {
                 print("failed to get data")
@@ -62,6 +84,12 @@ class GameScene: SKScene {
             // ship.setScale(0.5)
             self.addChild(ship)
         }
+        // add label to tell if player hit or miss
+        self.myLabel = SKLabelNode(fontNamed: "Arial")
+        self.myLabel.text = "Test"
+        self.myLabel.fontSize = 20;
+        self.myLabel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)/2);
+        self.addChild(self.myLabel)
         
         // handle updating gameboard when the other player makes a move
         Client.sharedInstance.socket.on("otherPlayerMoved") {[weak self] data, ack in

@@ -126,8 +126,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lnf-YO-tez">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lnf-YO-tez">
                                 <rect key="frame" x="153" y="133" width="295" height="104"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="295" id="x15-DI-Gfa"/>
+                                </constraints>
                                 <attributedString key="attributedText">
                                     <fragment content="BLANK!">
                                         <attributes>
@@ -141,6 +144,11 @@
                             </label>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="Lnf-YO-tez" firstAttribute="top" secondItem="7e5-u5-hIV" secondAttribute="bottom" constant="113" id="IU9-y5-rJC"/>
+                            <constraint firstItem="OuX-Nf-k4K" firstAttribute="top" secondItem="Lnf-YO-tez" secondAttribute="bottom" constant="363" id="RdL-Ll-3cy"/>
+                            <constraint firstItem="Lnf-YO-tez" firstAttribute="centerX" secondItem="brF-wq-WpB" secondAttribute="centerX" id="hyA-ZQ-JQ2"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="end_message" destination="Lnf-YO-tez" id="lFG-Xi-0AQ"/>
