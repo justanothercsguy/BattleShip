@@ -21,7 +21,7 @@ class Client {
     static let sharedInstance = Client()
     
     // change 192.168.1.64 to your local ip address
-    let socket = SocketIOClient(socketURL: NSURL(string: "http://192.168.1.64:3000")!, options: [.Log(false), .ForcePolling(true)])
+    let socket = SocketIOClient(socketURL: NSURL(string: "http://192.168.1.5:3000")!, options: [.Log(false), .ForcePolling(true)])
     var id: Int!
     var otherPlayerID: Int!
     var gameWon = false

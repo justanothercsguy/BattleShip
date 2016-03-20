@@ -346,8 +346,10 @@ io.on('connection', function(socket) {
         if (validMove) {
             if (game.checkHit(column, row, p1ID)) {
                 console.log("hit");
+                socket.emit("hitOrMiss", 1);
             } else {
                 console.log("not hit");
+                socket.emit("hitOrMiss", 0);
             }
             game.board[column][row] = TileState.OCCUPIED;
 
@@ -360,11 +362,12 @@ io.on('connection', function(socket) {
             // send to the other player the move the first player made
             p2Socket.emit("otherPlayerMoved", column, row);
 
+						// 1 = won, 0 = lose
             if (game.won(p1ID)) {
                 socket.emit("won", 1);
-                p2Socket.emit("lost", 0);
+                p2Socket.emit("won", 0);
             } else if (game.won(p2ID)) {
-                socket.emit("lost", 0);
+                socket.emit("won", 0);
                 p2Socket.emit("won", 1);
             }
         } else {
