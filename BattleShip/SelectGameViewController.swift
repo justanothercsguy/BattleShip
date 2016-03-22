@@ -12,7 +12,9 @@ class SelectGameViewController: UIViewController, UITableViewDataSource, UITable
 
     @IBOutlet weak var gamesTableView: UITableView!
     var games: NSArray!
-
+    let TILE_EMPTY = 0
+    let TILE_OCCUPIED = 3
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -20,13 +22,11 @@ class SelectGameViewController: UIViewController, UITableViewDataSource, UITable
         Client.sharedInstance.socket.on("currentBoard") {[weak self]data, ack in
             if let data = data[0] as? NSArray {
                 // iterate through NSArray to get [col, row] data and add Coordinates(row, col) to shipsArray
+                print("data")
                 for index in 0...data.count - 1 {
-                    let coordinateArray = data[index] as! NSDictionary
-                    let col = coordinateArray["x"] as! Int
-                    let row = coordinateArray["y"] as! Int
-                    
-                    let newCoordinate = Coordinates(xCoord: col, yCoord: row)
-                    Client.sharedInstance.shipsArray.append(newCoordinate)
+                    if index == self?.TILE_OCCUPIED {
+                        
+                    }
                     // print(newCoordinate)
                 }
                 
