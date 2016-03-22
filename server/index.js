@@ -41,6 +41,9 @@ function Game(p1, p2) {
     this.p1 = p1;
     this.p2 = p2;
     this.currentTurn = 0;
+    
+    // Socket that sends message to observer != null
+    this.observerSocket = null;
 
     // full game board array
     // return 0 = empty, 1 = player1's ship, 2 = player2's ship, 3 = occupied, undefined if outside of board
@@ -287,6 +290,16 @@ io.on('connection', function(socket) {
         // send the other players
         fn(getAllGames());
     });
+    
+    // observer wants to find active game to observe - when observer clicks this.observerSocket != null
+    // server sends observer dimensions of initial board and the board itself
+    socket.on("selectedGame", function(selectedGameID, fn) {    
+    		var game = games[selectedGameID.toString()];
+    		game.observerSocket = socket;
+    		fn(game.dimension.toString());   
+    		game.p1.socket.emit("initialObserverBoard", game.board);
+    					
+    });
 
     socket.on("selectedPlayer", function(playerID, selectedPlayerID, fn) {
         var player1 = clients[playerID.toString()];
@@ -361,6 +374,12 @@ io.on('connection', function(socket) {
 
             // send to the other player the move the first player made
             p2Socket.emit("otherPlayerMoved", column, row);
+            
+            // send to observerSocket the state of the board after a move
+            // need to test if observer gets initial socket before implementing this code
+            if (game.observerSocket != null) {
+            		game.observerSocket.emit("otherPlayerMoved", column, row);
+            }
 
 						// 1 = won, 0 = lose
             if (game.won(p1ID)) {
