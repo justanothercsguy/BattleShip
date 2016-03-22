@@ -17,6 +17,26 @@ class SelectGameViewController: UIViewController, UITableViewDataSource, UITable
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        Client.sharedInstance.socket.on("currentBoard") {[weak self]data, ack in
+            if let data = data[0] as? NSArray {
+                // iterate through NSArray to get [col, row] data and add Coordinates(row, col) to shipsArray
+                for index in 0...data.count - 1 {
+                    let coordinateArray = data[index] as! NSDictionary
+                    let col = coordinateArray["x"] as! Int
+                    let row = coordinateArray["y"] as! Int
+                    
+                    let newCoordinate = Coordinates(xCoord: col, yCoord: row)
+                    Client.sharedInstance.shipsArray.append(newCoordinate)
+                    // print(newCoordinate)
+                }
+                
+                let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+                let gameVC = storyBoard.instantiateViewControllerWithIdentifier("GameViewController") as! GameViewController
+                self?.presentViewController(gameVC, animated: true, completion: nil)
+            } else {
+                print("Failed to get data")
+            }
+        }
     }
 
     override func didReceiveMemoryWarning() {
