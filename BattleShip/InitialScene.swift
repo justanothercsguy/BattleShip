@@ -62,7 +62,6 @@ class InitialScene: SKScene {
                 } else if button.name == "observerButton" {
                     Client.sharedInstance.socket.emitWithAck("findGames", Client.sharedInstance.id)(timeoutAfter: 0, callback: {[weak self] data in
                         //self?.client.socket.emit("selectedPlayer", (self?.client)!.id, 2)
-                        
                         if let players = data[0] as? NSArray {
                             let vc = self?.view?.window?.rootViewController
                             let storyBoard = UIStoryboard(name: "Main", bundle: nil)

@@ -297,7 +297,8 @@ io.on('connection', function(socket) {
     		var game = games[selectedGameID.toString()];
     		game.observerSocket = socket;
     		fn(game.dimension.toString());   
-    		game.p1.socket.emit("initialObserverBoard", game.board);
+    		console.log(game.board);
+    		socket.emit("initialObserverBoard", game.board);
     					
     });
 

@@ -70,7 +70,7 @@ class GameScene: SKScene {
                 self.addChild(tile.sprite!)
             }
         }
-        // add ships to GameBoard
+        // add ships to GameBoard - this part is crashing
         let ships = Client.sharedInstance.shipsArray
         for index in 0...ships.count - 1 {
             // tile that we need to add ship_sprite to
