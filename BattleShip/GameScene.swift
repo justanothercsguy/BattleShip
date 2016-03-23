@@ -22,6 +22,18 @@ class GameScene: SKScene {
         // gamescene.sks messes up view, let's fix that
         self.size = view.bounds.size
         
+        // if observer, receive message on who won
+        Client.sharedInstance.socket.on("someoneWon") {[weak self] data, ack in
+            
+            if let wonID = data[0] as? Int {
+                let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+                let endScreenVC = storyBoard.instantiateViewControllerWithIdentifier("EndScreenViewController") as! EndScreenViewController
+                
+                endScreenVC.string = "Player \(wonID) won!"
+                self?.vc.presentViewController(endScreenVC, animated: true, completion: nil)
+            }
+        }
+        
         // check's if player hit or miss
         Client.sharedInstance.socket.on("hitOrMiss") {[weak self] data, ack in
             
@@ -102,6 +114,10 @@ class GameScene: SKScene {
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         /* Called when a touch begins */
+        if Client.sharedInstance.isObserver {
+            return
+        }
+        
         for touch in touches {
             let touchedNode = self.getTouchedNode(touch.locationInView(self.view))
             let touchedTile = self.game_board.tileFromName(touchedNode?.name)

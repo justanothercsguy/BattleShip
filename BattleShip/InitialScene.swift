@@ -75,6 +75,7 @@ class InitialScene: SKScene {
                             
                             selectPlayerVC.games = games.copy() as! NSArray
                             vc?.presentViewController(selectPlayerVC, animated: true, completion: nil)
+                            Client.sharedInstance.isObserver = true
                         } else {
                             print("fail")
                         }

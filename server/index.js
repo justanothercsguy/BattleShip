@@ -381,15 +381,24 @@ io.on('connection', function(socket) {
             if (game.observerSocket != null) {
             		game.observerSocket.emit("otherPlayerMoved", column, row);
             }
-
 						// 1 = won, 0 = lose
             if (game.won(p1ID)) {
                 socket.emit("won", 1);
                 p2Socket.emit("won", 0);
+            		   
+            		// if there is observer send ID of player that won       
+            		if (game.observerSocket !== null) {
+            				game.observerSocket.emit("someoneWon", p1ID); 
+            		}
+            		
             } else if (game.won(p2ID)) {
                 socket.emit("won", 0);
-                p2Socket.emit("won", 1);
-            }
+                p2Socket.emit("won", 1); 
+                            
+            		if (game.observerSocket !== null) {
+            				game.observerSocket.emit("someoneWon", p2ID);
+            		}
+            }            
         } else {
             fn("invalid");
         }

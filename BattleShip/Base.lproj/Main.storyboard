@@ -135,7 +135,7 @@
                                     <fragment content="BLANK!">
                                         <attributes>
                                             <color key="NSColor" red="1" green="0.82254491773787053" blue="0.12743183919512668" alpha="1" colorSpace="calibratedRGB"/>
-                                            <font key="NSFont" size="50" name="Chalkduster"/>
+                                            <font key="NSFont" size="30" name="Chalkduster"/>
                                             <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                         </attributes>
                                     </fragment>

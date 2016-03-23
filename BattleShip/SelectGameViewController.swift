@@ -24,19 +24,19 @@ class SelectGameViewController: UIViewController, UITableViewDataSource, UITable
         
         Client.sharedInstance.socket.on("initialObserverBoard") {[weak self]data, ack in
             if let ships = data[0] as? NSArray {
-                for column in 0...ships.count - 1 {
+                for row in 0...ships.count - 1 {
                     // first for loop is the number of columns
                     
-                    let thisRow = ships[column] as? NSArray
+                    let thisColumn = ships[row] as? NSArray
                     // iterate through NSArray to get [col, row] data and add Coordinates(row, col) to shipsArray
                     // row describes current index in the row while thisRow equals the entire row
-                    for row in 0...thisRow!.count - 1 {
-                        let num: Int = thisRow?.objectAtIndex(row) as! Int
-                        if num != self!.TILE_EMPTY || num != self!.TILE_OCCUPIED {
+                    for col in 0...thisColumn!.count - 1 {
+                        let num: Int = thisColumn?.objectAtIndex(col) as! Int
+                        if num != self!.TILE_EMPTY && num != self!.TILE_OCCUPIED {
                             // need to add x and y coordinates to ship array
                             
                             // wait what if we have to do the x and y reversal for the client and server
-                            let coordinate = Coordinates(xCoord: row, yCoord: column)
+                            let coordinate = Coordinates(xCoord: row, yCoord: col)
                             Client.sharedInstance.shipsArray.append(coordinate)
                         }
                     }
