@@ -19,13 +19,13 @@ class SelectGameViewController: UIViewController, UITableViewDataSource, UITable
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        Client.sharedInstance.socket.on("currentBoard") {[weak self]data, ack in
+        Client.sharedInstance.socket.on("initialObserverBoard") {[weak self]data, ack in
             if let data = data[0] as? NSArray {
                 // iterate through NSArray to get [col, row] data and add Coordinates(row, col) to shipsArray
                 print("data")
                 for index in 0...data.count - 1 {
                     if index == self?.TILE_OCCUPIED {
-                        
+                        print("ship")
                     }
                     // print(newCoordinate)
                 }
