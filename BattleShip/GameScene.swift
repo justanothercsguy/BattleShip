@@ -74,7 +74,7 @@ class GameScene: SKScene {
         let ships = Client.sharedInstance.shipsArray
         for index in 0...ships.count - 1 {
             // tile that we need to add ship_sprite to
-            let tile = game_board.tiles[ships[index].yCoord][ships[index].xCoord]
+            let tile = game_board.tiles[ships[index].coordinates[0].yCoord][ships[index].coordinates[0].xCoord]
             let ship = SKSpriteNode(imageNamed: "battleship")
             ship.position = tile.sprite!.position
             ship.size = tile.sprite!.size
