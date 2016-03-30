@@ -44,7 +44,7 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
                     let col = coordinateArray["x"] as! Int
                     let row = coordinateArray["y"] as! Int
                     
-                    let newCoordinate = Coordinates(xCoord: col, yCoord: row)
+                    let newCoordinate = Ship(length: 1, coordinates: [Coordinates(xCoord: col, yCoord: row)])
                     Client.sharedInstance.shipsArray.append(newCoordinate)
                     // print(newCoordinate)
                 }
@@ -90,6 +90,10 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
                 print("error creating game")
             }
         })
+    }
+    
+    @IBAction func cancelButtonPressed(sender: AnyObject) {
+        self.presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
     }
     /*
     // MARK: - Navigation

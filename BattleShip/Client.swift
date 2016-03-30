@@ -16,17 +16,23 @@ struct Coordinates {
     var yCoord: Int!
 }
 
+// represents a ship with its coordinates
+struct Ship {
+    var length: Int
+    var coordinates: [Coordinates]
+}
+
 class Client {
     // make this a singleton
     static let sharedInstance = Client()
     
     // change 192.168.1.64 to your local ip address
-    let socket = SocketIOClient(socketURL: NSURL(string: "http://10.223.123.41:3000")!, options: [.Log(false), .ForcePolling(true)])
+    let socket = SocketIOClient(socketURL: NSURL(string: "http://192.168.1.64:3000")!, options: [.Log(false), .ForcePolling(true)])
     var id: Int!
     var otherPlayerID: Int!
     var gameWon = false
     var gameboardSize: Int!
-    var shipsArray = [Coordinates]()
+    var shipsArray = [Ship]()
     var isObserver = false
     
     func setupHandlersAndConnect() {

@@ -196,6 +196,9 @@ gameStart - send back to each client participating in the game the size of the g
 
 // dictionary of players
 var clients = {};
+
+// dictionary of players not in a game
+var playersAvailableToPlay = {};
 // socket to player dictionary
 var socketToPlayer = {};
 
@@ -223,8 +226,8 @@ var getOtherPlayers = function(player) {
 function getAllPlayers() {
     var players = [];
 
-    for (var key in clients) {
-        players.push(clients[key].id);
+    for (var key in playersAvailableToPlay) {
+        players.push(playersAvailableToPlay[key].id);
     }
 
     return players;
@@ -255,6 +258,7 @@ io.on('connection', function(socket) {
     //---------------------------------------------
     var player = new Player(id, socket);
     clients[id.toString()] = player;
+    playersAvailableToPlay[id.toString()] = player
     socketToPlayer[socket] = player;
 
     // send id to client
@@ -299,6 +303,12 @@ io.on('connection', function(socket) {
     });
 
     socket.on("selectedPlayer", function(playerID, selectedPlayerID, fn) {
+        // remove these players from those available to start a game with, as they aren't available anymore
+        delete playersAvailableToPlay[playerID.toString()];
+        delete playersAvailableToPlay[selectedPlayerID.toString()];
+        // update avaialble players for each connected client
+        socket.broadcast.emit("availablePlayers", getAllPlayers());
+
         var player1 = clients[playerID.toString()];
         var player2 = clients[selectedPlayerID.toString()];
 
