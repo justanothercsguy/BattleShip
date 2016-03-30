@@ -101,7 +101,7 @@
                                 <rect key="frame" x="0.0" y="64" width="600" height="536"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" id="Ouh-xm-rxw">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="zishiCell" id="Ouh-xm-rxw">
                                         <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ouh-xm-rxw" id="lhh-8h-fgP">
@@ -151,7 +151,7 @@
                                     <fragment content="BLANK!">
                                         <attributes>
                                             <color key="NSColor" red="1" green="0.82254491773787053" blue="0.12743183919512668" alpha="1" colorSpace="calibratedRGB"/>
-                                            <font key="NSFont" size="50" name="Chalkduster"/>
+                                            <font key="NSFont" size="30" name="Chalkduster"/>
                                             <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                         </attributes>
                                     </fragment>

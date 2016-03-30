@@ -19,16 +19,29 @@ class SelectGameViewController: UIViewController, UITableViewDataSource, UITable
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        Client.sharedInstance.socket.on("currentBoard") {[weak self]data, ack in
-            if let data = data[0] as? NSArray {
-                // iterate through NSArray to get [col, row] data and add Coordinates(row, col) to shipsArray
-                print("data")
-                for index in 0...data.count - 1 {
-                    if index == self?.TILE_OCCUPIED {
-                        
+        self.gamesTableView.dataSource = self
+        self.gamesTableView.delegate = self
+        
+        Client.sharedInstance.socket.on("initialObserverBoard") {[weak self]data, ack in
+            if let ships = data[0] as? NSArray {
+                for row in 0...ships.count - 1 {
+                    // first for loop is the number of columns
+                    
+                    let thisColumn = ships[row] as? NSArray
+                    // iterate through NSArray to get [col, row] data and add Coordinates(row, col) to shipsArray
+                    // row describes current index in the row while thisRow equals the entire row
+                    for col in 0...thisColumn!.count - 1 {
+                        let num: Int = thisColumn?.objectAtIndex(col) as! Int
+                        if num != self!.TILE_EMPTY && num != self!.TILE_OCCUPIED {
+                            // need to add x and y coordinates to ship array
+                            
+                            // wait what if we have to do the x and y reversal for the client and server
+                            let coordinate = Coordinates(xCoord: row, yCoord: col)
+                            Client.sharedInstance.shipsArray.append(coordinate)
+                        }
                     }
-                    // print(newCoordinate)
                 }
+
                 
                 let storyBoard = UIStoryboard(name: "Main", bundle: nil)
                 let gameVC = storyBoard.instantiateViewControllerWithIdentifier("GameViewController") as! GameViewController
@@ -49,10 +62,11 @@ class SelectGameViewController: UIViewController, UITableViewDataSource, UITable
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cellIdentifier = "cell"
+        let cellIdentifier = "zishiCell"
         let cell = self.gamesTableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as UITableViewCell
         
-        cell.textLabel?.text = String(self.games[indexPath.row])
+        cell.textLabel?.text = String(self.games.objectAtIndex(indexPath.row))
+        print("it is \(self.games.objectAtIndex(indexPath.row))")
         
         return cell
     }
@@ -61,7 +75,7 @@ class SelectGameViewController: UIViewController, UITableViewDataSource, UITable
         let game = self.games[indexPath.row] as! String
         let gameArray = game.characters.split{$0 == ":"}.map(String.init)
         
-        Client.sharedInstance.socket.emitWithAck("selectedGame", Client.sharedInstance.id, gameArray[0] + gameArray[1])(timeoutAfter: 0, callback: {[weak self] data in
+        Client.sharedInstance.socket.emitWithAck("selectedGame", gameArray[0] + gameArray[1])(timeoutAfter: 0, callback: {[weak self] data in
             if let data = data[0] as? String where data != "not ok" {
                 Client.sharedInstance.gameboardSize = Int(data)
             } else {

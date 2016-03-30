@@ -15,16 +15,19 @@ class InitialScene: SKScene {
     override func didMoveToView(view: SKView) {
         
         self.newGameButton = SKSpriteNode(imageNamed: "play_button")
-        self.observerButton = SKSpriteNode(imageNamed: "play_button")
+        self.observerButton = SKSpriteNode(imageNamed: "observer_button")
         self.newGameButton.name = "newGameButton"
         self.observerButton.name = "observerButton"
         Client.sharedInstance.setupHandlersAndConnect()
         self.newGameButton.xScale = 2
         self.newGameButton.yScale = 2
-        self.observerButton.xScale = 2
-        self.observerButton.yScale = 2
-        self.newGameButton.position = CGPointMake(frame.width / 2, frame.height / 2)
-        self.observerButton.position = CGPointMake(frame.width / 4, frame.height / 4)
+        self.observerButton.xScale = 1.5
+        self.observerButton.yScale = 1.5
+        
+        // SpriteKit CGFloat Coordinates: x = 0, y = 0 is bottom left corner of screen
+        // Make play start at top third of screen and observer button stop at bottom third of screen
+        self.newGameButton.position = CGPointMake(frame.width / 2, frame.height / 1.5)
+        self.observerButton.position = CGPointMake(frame.width / 2, frame.height / 3)
         self.addChild(self.newGameButton)
         self.addChild(self.observerButton)
     }
@@ -62,7 +65,6 @@ class InitialScene: SKScene {
                 } else if button.name == "observerButton" {
                     Client.sharedInstance.socket.emitWithAck("findGames", Client.sharedInstance.id)(timeoutAfter: 0, callback: {[weak self] data in
                         //self?.client.socket.emit("selectedPlayer", (self?.client)!.id, 2)
-                        
                         if let players = data[0] as? NSArray {
                             let vc = self?.view?.window?.rootViewController
                             let storyBoard = UIStoryboard(name: "Main", bundle: nil)
@@ -76,6 +78,7 @@ class InitialScene: SKScene {
                             
                             selectPlayerVC.games = games.copy() as! NSArray
                             vc?.presentViewController(selectPlayerVC, animated: true, completion: nil)
+                            Client.sharedInstance.isObserver = true
                         } else {
                             print("fail")
                         }
