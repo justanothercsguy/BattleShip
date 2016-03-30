@@ -28,6 +28,16 @@ function Player(id, socket) {
         return this.ships;
     }
 }
+// coordinate class
+function Coordinate(x, y) {
+		this.x = x;
+		this.y = y;
+}
+
+// Ship class 
+function Ship(length, coordinates) {
+
+// }
 
 // enum style object to denote empty and occupied tiles
 TileState = {
@@ -117,14 +127,18 @@ function Game(p1, p2) {
                 this.board[col][row] = p1.boardID;
                 this.p1_board[col][row] = p1.boardID;
                 this.player1_ship_count++;
-
+							
+						/* original code
                 var coordinate = {
                     x: col,
                     y: row
-                };
-
+                };*/
+						
+						// use new Coordinate class
+								var coordinate = new Coordinate(col, row);	
                 this.p1.ships.push(coordinate);
             }
+            
         }
         // add player 2's five ships
         while (this.player2_ship_count < 5) {
@@ -139,11 +153,7 @@ function Game(p1, p2) {
 
                 this.player2_ship_count++;
 
-                var coordinate = {
-                    x: col,
-                    y: row
-                };
-
+                var coordinate = new Coordinate(col, row);
                 this.p2.ships.push(coordinate);
             }
         }
@@ -327,6 +337,10 @@ io.on('connection', function(socket) {
         // send player1's view of board as 2d array to client
         socket.emit("initialBoard", player1.getShips());
         player2Socket.emit("initialBoard", player2.getShips());
+        
+        // print out player ship array to see if coordinate class worked
+        console.log(player1.ships);
+        console.log(player2.ships);
 
     });
 
