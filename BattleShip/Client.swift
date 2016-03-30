@@ -33,6 +33,7 @@ class Client {
     var gameWon = false
     var gameboardSize: Int!
     var shipsArray = [Ship]()
+    var isObserver = false
     
     func setupHandlersAndConnect() {
         self.socket.on("connect") {[weak self] data, ack in

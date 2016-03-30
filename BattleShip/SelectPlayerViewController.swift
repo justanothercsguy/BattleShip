@@ -91,6 +91,10 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
             }
         })
     }
+    
+    @IBAction func cancelButtonPressed(sender: AnyObject) {
+        self.presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
+    }
     /*
     // MARK: - Navigation
 

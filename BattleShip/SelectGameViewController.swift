@@ -36,7 +36,7 @@ class SelectGameViewController: UIViewController, UITableViewDataSource, UITable
                             // need to add x and y coordinates to ship array
                             
                             // wait what if we have to do the x and y reversal for the client and server
-                            let coordinate = Coordinates(xCoord: row, yCoord: col)
+                            let coordinate = Ship(length: 1, coordinates: [Coordinates(xCoord: row, yCoord: col)])
                             Client.sharedInstance.shipsArray.append(coordinate)
                         }
                     }
@@ -83,8 +83,10 @@ class SelectGameViewController: UIViewController, UITableViewDataSource, UITable
             }
         })
     }
-    
 
+    @IBAction func cancelButtonPressed(sender: AnyObject) {
+        self.presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
+    }
     /*
     // MARK: - Navigation
 
