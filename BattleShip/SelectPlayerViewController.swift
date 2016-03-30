@@ -38,6 +38,7 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
         
         Client.sharedInstance.socket.on("initialBoard") {[weak self]data, ack in
             if let data = data[0] as? NSArray {
+                print(data)
                 // iterate through NSArray to get [col, row] data and add Coordinates(row, col) to shipsArray
                 for index in 0...data.count - 1 {
                     let coordinateArray = data[index] as! NSDictionary
