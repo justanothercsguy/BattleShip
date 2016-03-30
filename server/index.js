@@ -28,16 +28,17 @@ function Player(id, socket) {
         return this.ships;
     }
 }
-// coordinate class
+// coordinate class: x = column number, y = row number
 function Coordinate(x, y) {
 		this.x = x;
 		this.y = y;
 }
 
-// Ship class 
+// Ship class: length of ship and array of coordinates that ship occupies
 function Ship(length, coordinates) {
-
-// }
+		this.length = length;
+		this.coordinates = coordinates;
+}
 
 // enum style object to denote empty and occupied tiles
 TileState = {
@@ -64,10 +65,6 @@ function Game(p1, p2) {
     this.p1_board = []
     this.p2_board = []
 
-    // keeps track of number of ships each player has
-    this.player1_ship_count = 0;
-    this.player2_ship_count = 0;
-
     this.getPlayer1 = function() {
         return this.p1;
     }
@@ -84,19 +81,10 @@ function Game(p1, p2) {
         return this.p2_board;
     }
 
-
-    // col, row = 2d coordinates of tile, gives unique values of tiles ranging from 
-    // 0 to (dimension^2 - 1) to tell which tiles are empty and available for ship to be placed in
-    /*  NOT WORKING FOR SOME REASON
-    
-    this.getOneDimensionalArrayIndex(col, row) {
-        return (this.dimension * col) + row
-    }*/
-
     // Once a game starts, the server will create an empty (full of O's) random size grid (square) 
     // that is not smaller than 8x8 and not larger than 24x24.
     this.initializeBoard = function() {
-        this.dimension = 5; //;Math.floor((Math.random() * 16) + 8);
+        this.dimension = 10; // Math.floor((Math.random() * 16) + 8);
 
         for (var i = 0; i < this.dimension; i++) {
             var col = [];
@@ -107,26 +95,26 @@ function Game(p1, p2) {
 
             this.board[i] = col;
         }
-
         // also initialize player one and player 2 boards - trying different 2d array initialize method
         this.p1_board = new Array(this.dimension).fill(new Array(this.dimension).fill(0));
         this.p2_board = new Array(this.dimension).fill(new Array(this.dimension).fill(0));
     }
+
 
     // randomly add ships to board - 0 for empty spot, 1 for player 1's ships, 2 for player 2's ship
     // we will implement battleship actual rules later - for now, just add five ships for each player
     this.initializeShips = function() {
 
         // add player 1's five ships
-        while (this.player1_ship_count < 5) {
+        while (this.p1.ships.length < 5) {
             var col = Math.floor((Math.random() * this.dimension));
             var row = Math.floor((Math.random() * this.dimension));
+            
             // if we find an empty tile, insert id number for player 1's ship into board, update
             // player1's board, and add coordinates to player 1's array of ships
             if (this.board[col][row] == 0) {
                 this.board[col][row] = p1.boardID;
                 this.p1_board[col][row] = p1.boardID;
-                this.player1_ship_count++;
 							
 						/* original code
                 var coordinate = {
@@ -141,7 +129,7 @@ function Game(p1, p2) {
             
         }
         // add player 2's five ships
-        while (this.player2_ship_count < 5) {
+        while (this.p2.ships.length < 5) {
             var col = Math.floor((Math.random() * this.dimension));
             var row = Math.floor((Math.random() * this.dimension));
 
@@ -150,8 +138,6 @@ function Game(p1, p2) {
             if (this.board[col][row] == 0) {
                 this.board[col][row] = p2.boardID;
                 this.p1_board[col][row] = p2.boardID;
-
-                this.player2_ship_count++;
 
                 var coordinate = new Coordinate(col, row);
                 this.p2.ships.push(coordinate);
