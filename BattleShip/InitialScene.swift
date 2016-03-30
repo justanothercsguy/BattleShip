@@ -15,16 +15,19 @@ class InitialScene: SKScene {
     override func didMoveToView(view: SKView) {
         
         self.newGameButton = SKSpriteNode(imageNamed: "play_button")
-        self.observerButton = SKSpriteNode(imageNamed: "play_button")
+        self.observerButton = SKSpriteNode(imageNamed: "observer_button")
         self.newGameButton.name = "newGameButton"
         self.observerButton.name = "observerButton"
         Client.sharedInstance.setupHandlersAndConnect()
         self.newGameButton.xScale = 2
         self.newGameButton.yScale = 2
-        self.observerButton.xScale = 2
-        self.observerButton.yScale = 2
-        self.newGameButton.position = CGPointMake(frame.width / 2, frame.height / 2)
-        self.observerButton.position = CGPointMake(frame.width / 4, frame.height / 4)
+        self.observerButton.xScale = 1.5
+        self.observerButton.yScale = 1.5
+        
+        // SpriteKit CGFloat Coordinates: x = 0, y = 0 is bottom left corner of screen
+        // Make play start at top third of screen and observer button stop at bottom third of screen
+        self.newGameButton.position = CGPointMake(frame.width / 2, frame.height / 1.5)
+        self.observerButton.position = CGPointMake(frame.width / 2, frame.height / 3)
         self.addChild(self.newGameButton)
         self.addChild(self.observerButton)
     }
