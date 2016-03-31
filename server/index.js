@@ -410,13 +410,6 @@ function getAllGames() {
 io.on('connection', function(socket) {
     console.log('a user connected');
 
-    // testing get player list
-    //---------------------------------------------
-    if (id == 0) {
-        clients[id.toString()] = new Player(id, socket);
-        id++;
-    }
-    //---------------------------------------------
     var player = new Player(id, socket);
     clients[id.toString()] = player;
     playersAvailableToPlay[id.toString()] = player
