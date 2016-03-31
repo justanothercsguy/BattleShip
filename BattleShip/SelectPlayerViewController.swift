@@ -38,13 +38,14 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
         
         Client.sharedInstance.socket.on("initialBoard") {[weak self]data, ack in
             if let data = data[0] as? NSArray {
+                print(data)
                 // iterate through NSArray to get [col, row] data and add Coordinates(row, col) to shipsArray
                 for index in 0...data.count - 1 {
                     let coordinateArray = data[index] as! NSDictionary
                     let col = coordinateArray["x"] as! Int
                     let row = coordinateArray["y"] as! Int
                     
-                    let newCoordinate = Coordinates(xCoord: col, yCoord: row)
+                    let newCoordinate = Ship(length: 1, coordinates: [Coordinates(xCoord: col, yCoord: row)])
                     Client.sharedInstance.shipsArray.append(newCoordinate)
                     // print(newCoordinate)
                 }
@@ -90,6 +91,10 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
                 print("error creating game")
             }
         })
+    }
+    
+    @IBAction func cancelButtonPressed(sender: AnyObject) {
+        self.presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
     }
     /*
     // MARK: - Navigation
