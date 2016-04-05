@@ -145,7 +145,7 @@ io.on('connection', function(socket) {
     // server sends observer dimensions of initial board and the board itself
     socket.on("selectedGame", function(selectedGameID, fn) {
         var game = games[selectedGameID.toString()];
-        game.observerSocket = socket;
+        game.observerSockets.push(socket);
         fn(game.dimension.toString());
         console.log(game.board);
         socket.emit("initialObserverBoard", game.board);
@@ -238,8 +238,8 @@ io.on('connection', function(socket) {
 
             // send to observerSocket the state of the board after a move
             // need to test if observer gets initial socket before implementing this code
-            if (game.observerSocket != null) {
-                game.observerSocket.emit("otherPlayerMoved", column, row);
+            for (var observerSocket in game.observerSockets) {
+                observerSocket.emit("otherPlayerMoved", column, row);
             }
             // 1 = won, 0 = lose
             if (game.won(p1ID)) {
@@ -247,16 +247,16 @@ io.on('connection', function(socket) {
                 p2Socket.emit("won", 0);
 
                 // if there is observer send ID of player that won       
-                if (game.observerSocket !== null) {
-                    game.observerSocket.emit("someoneWon", p1ID);
+                for (var observerSocket in game.observerSockets) {
+                    observerSocket.emit("someoneWon", p1ID);
                 }
 
             } else if (game.won(p2ID)) {
                 socket.emit("won", 0);
                 p2Socket.emit("won", 1);
 
-                if (game.observerSocket !== null) {
-                    game.observerSocket.emit("someoneWon", p2ID);
+                for (var observerSocket in game.observerSockets) {
+                    observerSocket.emit("someoneWon", p2ID);
                 }
             }
         } else {

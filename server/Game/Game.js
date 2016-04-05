@@ -6,7 +6,7 @@ module.exports = function Game(p1, p2) {
     this.currentTurn = 0;
 
     // Socket that sends message to observer != null
-    this.observerSocket = null;
+    this.observerSockets = [];
 
     // full game board array
     // return 0 = empty, 1 = player1's ship, 2 = player2's ship, 3 = occupied, undefined if outside of board
