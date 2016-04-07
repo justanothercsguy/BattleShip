@@ -1,3 +1,22 @@
+// enum style object to denote direction of ship
+ShipDirection = {
+    UP: 0,
+    RIGHT: 1,
+    DOWN: 2,
+    LEFT: 3
+}
+
+function Coordinate(column, row) {
+    this.column = column;
+    this.row = row;
+}
+
+function Ship(length, coordinates, currentDirection) {
+    this.length = length;
+    this.coordinates = coordinates;
+    this.currentDirection = currentDirection;
+}
+
 // Game class - parameters: player1, player2, board
 module.exports = function Game(p1, p2) {
 
