@@ -9,13 +9,13 @@
 import UIKit
 
 class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-
+    
     @IBOutlet weak var playerTableView: UITableView!
     var players: NSArray!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
         self.playerTableView.delegate = self
         self.playerTableView.dataSource = self
@@ -57,8 +57,42 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
                 print("Failed to get data")
             }
         }
+        
+        Client.sharedInstance.socket.on("agreeToGame") {[weak self]data, ack in
+            if let player = data[0] as? Int {
+                Client.sharedInstance.otherPlayerID = player
+                
+                let alertController = UIAlertController(title: "Another player wants to play.", message: "Do you want to start a game with player \(player)?", preferredStyle: .Alert)
+                
+                let yesAction = UIAlertAction(title: "Yes", style: .Cancel) { (action) in
+                    Client.sharedInstance.socket.emit("agreesToGame", Client.sharedInstance.id, Client.sharedInstance.otherPlayerID, true)
+                }
+                let noAction = UIAlertAction(title: "No", style: .Default) { (action) in
+                    Client.sharedInstance.socket.emit("agreesToGame", Client.sharedInstance.id, Client.sharedInstance.otherPlayerID, false)
+                }
+                
+                alertController.addAction(yesAction)
+                alertController.addAction(noAction)
+                
+                self?.presentViewController(alertController, animated: true, completion: nil)
+            } else {
+                print("fail")
+            }
+        }
+        
+        Client.sharedInstance.socket.on("playerDisagreed") {[weak self]data, ack in
+            let alertController = UIAlertController(title: "Other player said no.", message: "Other player doesn't want to play right now.", preferredStyle: .Alert)
+            
+            let okayAction = UIAlertAction(title: "Okay", style: .Cancel) { (action) in
+                
+            }
+            
+            alertController.addAction(okayAction)
+            
+            self?.presentViewController(alertController, animated: true, completion: nil)
+        }
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -82,28 +116,23 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
     // selected a row in the table view
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let otherPlayerID = self.players[indexPath.row] as! Int
-
-        Client.sharedInstance.socket.emitWithAck("selectedPlayer", Client.sharedInstance.id, otherPlayerID)(timeoutAfter: 0, callback: {[weak self] data in
-            if let data = data[0] as? String where data != "not ok" {
-                Client.sharedInstance.otherPlayerID = otherPlayerID
-                Client.sharedInstance.gameboardSize = Int(data)
-            } else {
-                print("error creating game")
-            }
-        })
+        
+        Client.sharedInstance.socket.emit("selectedPlayer", Client.sharedInstance.id, otherPlayerID)
+        self.playerTableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
     
     @IBAction func cancelButtonPressed(sender: AnyObject) {
         self.presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
     }
+    
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+     // Get the new view controller using segue.destinationViewController.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
 }

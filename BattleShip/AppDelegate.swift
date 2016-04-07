@@ -39,9 +39,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-        if let socket = Client.sharedInstance.socket {
-            socket.disconnect()
-            print("disconnected")
+        if Client.sharedInstance.socket.status == .Connected {
+            Client.sharedInstance.socket.disconnect()
         }
     }
 

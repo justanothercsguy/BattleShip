@@ -123,6 +123,7 @@ io.on('connection', function(socket) {
         console.log("a user disconnected");
         var currentPlayer = socketToPlayer[socket];
         delete clients[currentPlayer.id.toString()];
+        delete playersAvailableToPlay[currentPlayer.id.toString()];
 
         socket.broadcast.emit("availablePlayers", getAllPlayers());
     });
@@ -153,41 +154,49 @@ io.on('connection', function(socket) {
     });
 
     socket.on("selectedPlayer", function(playerID, selectedPlayerID, fn) {
-        // remove these players from those available to start a game with, as they aren't available anymore
-        delete playersAvailableToPlay[playerID.toString()];
-        delete playersAvailableToPlay[selectedPlayerID.toString()];
-        // update avaialble players for each connected client
-        socket.broadcast.emit("availablePlayers", getAllPlayers());
+    	var otherPlayer = clients[selectedPlayerID.toString()];
+    	otherPlayer.socket.emit("agreeToGame", playerID)
+    });
 
-        var player1 = clients[playerID.toString()];
-        var player2 = clients[selectedPlayerID.toString()];
+    socket.on("agreesToGame", function(playerID, selectedPlayerID, agrees) {
+    	if (agrees) {
+	    	// remove these players from those available to start a game with, as they aren't available anymore
+	        delete playersAvailableToPlay[playerID.toString()];
+	        delete playersAvailableToPlay[selectedPlayerID.toString()];
+	        // update avaialble players for each connected client
+	        socket.broadcast.emit("availablePlayers", getAllPlayers());
 
-        player1.boardID = 1;
-        player2.boardID = 2;
+	        var player1 = clients[playerID.toString()];
+	        var player2 = clients[selectedPlayerID.toString()];
 
-        var game = new Game(player1, player2);
-        game.initializeBoard();
-        game.initializeShips();
-        game.currentTurn = player1.id;
+	        player1.boardID = 1;
+	        player2.boardID = 2;
 
-        games[playerID.toString() + selectedPlayerID.toString()] = game;
+	        var game = new Game(player1, player2);
+	        game.initializeBoard();
+	        game.initializeShips();
+	        game.currentTurn = player1.id;
 
-        var player2Socket = clients[selectedPlayerID.toString()].socket;
+	        games[playerID.toString() + selectedPlayerID.toString()] = game;
 
-        // send size to this player
-        fn(game.dimension.toString());
+	        var player2Socket = clients[selectedPlayerID.toString()].socket;
 
-        // send size to the other player
-        player2Socket.emit("newGameWithOtherPlayer", game.dimension.toString(), player1.id);
+	        // send size to the players
+	        socket.emit("newGameWithOtherPlayer", game.dimension.toString(), player2.id);
+	        player2Socket.emit("newGameWithOtherPlayer", game.dimension.toString(), player1.id);
 
-        // send player1's view of board as 2d array to client
-        socket.emit("initialBoard", player1.getShips());
-        player2Socket.emit("initialBoard", player2.getShips());
+	        // send player1's view of board as 2d array to client
+	        socket.emit("initialBoard", player1.getShips());
+	        player2Socket.emit("initialBoard", player2.getShips());
 
-        // print out player ship array to see if coordinate class worked
-        console.log(player1.ships);
-        console.log(player2.ships);
-
+	        // print out player ship array to see if coordinate class worked
+	        console.log(player1.ships);
+	        console.log(player2.ships);
+	    } else {
+	    	// tell original player this player doesn't want to play
+	    	var otherPlayer = clients[selectedPlayerID.toString()];
+	    	otherPlayer.socket.emit("playerDisagreed");
+	    }
     });
 
     // this will be emitted with ack, fn is the function we use to ack
