@@ -8,9 +8,11 @@
 
 import UIKit
 
-class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UINavigationBarDelegate {
     
     @IBOutlet weak var playerTableView: UITableView!
+    @IBOutlet weak var navBar: UINavigationBar!
+    
     var players: NSArray!
     
     override func viewDidLoad() {
@@ -19,6 +21,7 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
         // Do any additional setup after loading the view.
         self.playerTableView.delegate = self
         self.playerTableView.dataSource = self
+        self.navBar.delegate = self
         
         Client.sharedInstance.socket.on("availablePlayers") {[weak self]data, ack in
             if let players = data[0] as? NSArray {
@@ -121,7 +124,13 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
         self.playerTableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
     
+    // called by nav bar delegate - to make nav bar be to the top of the screen
+    func positionForBar(bar: UIBarPositioning) -> UIBarPosition {
+        return UIBarPosition.TopAttached
+    }
+    
     @IBAction func cancelButtonPressed(sender: AnyObject) {
+        Client.sharedInstance.socket.emit("notInterestedInGame", Client.sharedInstance.id)
         self.presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
     }
     

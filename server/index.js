@@ -108,7 +108,6 @@ io.on('connection', function(socket) {
 
     var player = new Player(id, socket);
     clients[id.toString()] = player;
-    playersAvailableToPlay[id.toString()] = player
     socketToPlayer[socket] = player;
 
     // send id to client
@@ -132,7 +131,16 @@ io.on('connection', function(socket) {
     socket.on("findPlayers", function(playerID, fn) {
         //var otherPlayersJSONString = JSON.stringify(otherPlayers);
         // send the other players
+        // add this player to the available players, since he now wants to play
+        var player = clients[playerID.toString()];
+        playersAvailableToPlay[playerID.toString()] = player
         fn(getAllPlayers());
+        socket.broadcast.emit("availablePlayers", getAllPlayers());
+    });
+
+    socket.on("notInterestedInGame", function(playerID) {
+    	delete playersAvailableToPlay[playerID.toString()];
+    	socket.broadcast.emit("availablePlayers", getAllPlayers());
     });
 
     // client wants to find active games
