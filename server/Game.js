@@ -83,9 +83,7 @@ module.exports = function Game(p1, p2) {
     		// DOWN: same column number, check row numbers larger than randomly generated row
   			// example: coordinate is (row: 4, col: 5), length = 3 -> then check (5,5) and (6,5) 
         if (direction == ShipDirection.DOWN) {
-        		// console.log("board before: check valid placement DOWN");
         		for (var r = row; r < row+length; r++) {
-        				// console.log("row: " + r + ", col: " + col + ", value: " + this.board[r][col]);
         				if (this.board[r][col] != 0) {
         						console.log("invalid placement DOWN");
             				return 0;
@@ -95,9 +93,7 @@ module.exports = function Game(p1, p2) {
        	// RIGHT: same row number, check column numbers larger than randomly generated column
   			// example: coordinate is (row: 4, col: 5), length = 3 -> then check (4,6) and (4,7) 	
        	else {	
-        		// console.log("board before: check valid placement RIGHT");
         		for (var c = col; c < col+length; c++) {
-        				// console.log("row: " + row + ", col: " + c + ", value: " + this.board[row][c]);
         				if (this.board[row][c] != 0) {
         						console.log("invalid placement RIGHT");
             				return 0;

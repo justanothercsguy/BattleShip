@@ -9,10 +9,10 @@ app.get('/', function(req, res) {
     res.sendfile('index.html');
 });
 
-// coordinate class: x = column number, y = row number
-function Coordinate(x, y) {
-    this.x = x;
-    this.y = y;
+// coordinate class: row = index of 1d array in the 2d array, row number = index of value in 1d array
+function Coordinate(row, col) {
+    this.row = row;
+		this.col = col;
 }
 
 // Ship class: length of ship and array of coordinates that ship occupies
@@ -30,10 +30,8 @@ TileState = {
 
 // enum style object to denote direction of ship
 ShipDirection = {
-    UP: 0,
-    RIGHT: 1,
-    DOWN: 2,
-    LEFT: 3
+    DOWN: 0,
+    RIGHT: 1
 }
 
 /*
