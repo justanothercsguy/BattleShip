@@ -1,29 +1,32 @@
-// enum style object to denote direction of ship
-ShipDirection = {
-    UP: 0,
-    RIGHT: 1,
-    DOWN: 2,
-    LEFT: 3
-}
+var Player = require('./Player');
 
-function Coordinate(column, row) {
-    this.column = column;
-    this.row = row;
-}
-
-function Ship(length, coordinates, currentDirection) {
+// don't know how to divide into separate class file - will do later
+function Ship(length, coordinates, direction) {
     this.length = length;
     this.coordinates = coordinates;
-    this.currentDirection = currentDirection;
+    this.direction = direction;
 }
 
+// enum style object to denote direction of ship
+// we will only use two directions: down and right
+ShipDirection = {
+    DOWN: 0,
+    RIGHT: 1
+}
+
+// coordinate class: row = index of 1d array in the 2d array, column = index of value in 1d array
+function Coordinate(row, col) {
+    this.row = row;
+		this.col = col;
+}
+		
 // Game class - parameters: player1, player2, board
 module.exports = function Game(p1, p2) {
 
     this.p1 = p1;
     this.p2 = p2;
     this.currentTurn = 0;
-
+    
     // Socket that sends message to observer != null
     this.observerSocket = null;
 
@@ -51,222 +54,146 @@ module.exports = function Game(p1, p2) {
     this.getPlayer2Board = function() {
         return this.p2_board;
     }
-
-    // Once a game starts, the server will create an empty (full of O's) random size grid (square) 
-    // that is not smaller than 8x8 and not larger than 24x24.
+    /* 
+    NOTE: DON'T use this: this.p2_board = new Array(this.dimension).fill(new Array(this.dimension).fill(0));
+    I was trying to test my validPlacement function by setting [row+1][col] = 1 (the point below the randomly 
+    chosen point) so that the function would detect the 1 (not empty tile) -> unfortunately every row in that column = 1
+    Fixed this bug by using nested for loops to make 2d array board	
+    */
+      
+    // Once a game starts, the server will create an empty (full of O's) square grid
+    // between size 8x8 and 24x24, then initialize boards for player 1 and player 2
     this.initializeBoard = function() {
-        this.dimension = 10; // Math.floor((Math.random() * 16) + 8);
-
+       
+        this.dimension = 10; //Math.floor((Math.random() * 16) + 8);    
         for (var i = 0; i < this.dimension; i++) {
-            var col = [];
-
+            var row = [];
             for (var j = 0; j < this.dimension; j++) {
-                col.push(0);
+                row.push(0);
             }
-
-            this.board[i] = col;
+            this.board[i] = row;
+            this.p1_board[i] = row;
+            this.p2_board[i] = row;
         }
-        // also initialize player one and player 2 boards - trying different 2d array initialize method
-        this.p1_board = new Array(this.dimension).fill(new Array(this.dimension).fill(0));
-        this.p2_board = new Array(this.dimension).fill(new Array(this.dimension).fill(0));
+    }  
+      
+    // return 0 if a tile in specified direction is not empty; otherwise return 1
+    this.checkValidPlacement = function(row, col, length, direction) {  
+
+    		// DOWN: same column number, check row numbers larger than randomly generated row
+  			// example: coordinate is (row: 4, col: 5), length = 3 -> then check (5,5) and (6,5) 
+        if (direction == ShipDirection.DOWN) {
+        		// console.log("board before: check valid placement DOWN");
+        		for (var r = row; r < row+length; r++) {
+        				// console.log("row: " + r + ", col: " + col + ", value: " + this.board[r][col]);
+        				if (this.board[r][col] != 0) {
+        						console.log("invalid placement DOWN");
+            				return 0;
+            		}
+       			}
+       	}  
+       	// RIGHT: same row number, check column numbers larger than randomly generated column
+  			// example: coordinate is (row: 4, col: 5), length = 3 -> then check (4,6) and (4,7) 	
+       	else {	
+        		// console.log("board before: check valid placement RIGHT");
+        		for (var c = col; c < col+length; c++) {
+        				// console.log("row: " + row + ", col: " + c + ", value: " + this.board[row][c]);
+        				if (this.board[row][c] != 0) {
+        						console.log("invalid placement RIGHT");
+            				return 0;
+            		}
+       			}    		
+       	}      	
+       	console.log("Valid placement");   	
+       	return 1;
     }
-
-    // original logic for generating ships
-    // randomly add ships to board - 0 for empty spot, 1 for player 1's ships, 2 for player 2's ship
-    // we will implement battleship actual rules later - for now, just add five ships for each player
-    this.initializeShips = function() {
-
-        // new logic to generate ships of different sizes
-        while (this.p1.ships.length < 3) {
-
-            // generate a starting point - will be in format [col][row]
-            var col = Math.floor((Math.random() * this.dimension)); // x-axis coordinate
-            var row = Math.floor((Math.random() * this.dimension)); // y-axis coordinate
-
-            // generate a random length for ship between 2-4
-            var length = Math.floor((Math.random() * 3)) + 2;
-
-            // if we find an empty tile, see if it has enough empty tiles to it's left, right, up, down
-            // direction to insert the ship into. For example, if we have a ship of length = 3 and the
-            // random coordinate is (4,5) then we can insert ship in left if (3,5) and (2,5) are working
-            if (this.board[col][row] == 0) {
-
-                // if ship can't be placed in a direction, turn this into 0
-                var validPlacement = 1;
-
-                // coordinates to hold ship if validPlacement = 1
-                var coordinates = [];
-
-                // up = 0, right = 1, down = 2, left = 3 - start with one number, then try the 
-                // others if the first direction selected fails
-                // if no direction works, then exit this if statement and go back to while loop 
-                // to generate a new coordinate and try directions again
-                var startDirection = Math.floor((Math.random() * 4));
-                for (var i = startDirection; i < startDirection + 4; i++) {
-
-                    // get the current direction we are on and try fitting it into board
-                    var currentDirection = i % 4;
-
-                    if (currentDirection == ShipDirection.UP) { // try UP direction
-                        console.log("Reached UP direction");
-                        // same column number, check row numbers above randomly generated row
-                        // example: coordinate is (col: 4, row: 5), length = 3 -> then check (4,4) and (4,3) 
-                        for (var j = 1; j < length; j++) {
-                            if (this.board[col][row - j] != 0) {
-                                // console.log("col: " + col + ", row: " + row + " doesn't work")
-                                validPlacement = 0;
-                            }
-                        }
-                        // test validPlacement var
-                        if (validPlacement == 0) {
-                            console.log("col: " + col + ", row: " + row + " doesn't work going UP")
-                        } else {
-                            console.log("col: " + col + ", row: " + row + " works going UP")
-
-                            // create all coordinates for ship array
-                            for (var j = 1; j < length; j++) {
-                                var coordinate = new Coordinate(col, row - j);
-                                coordinates.push(coordinate);
-
-                                // problem is how do we distinguish player 1's ships from each other
-                                this.board[col][row - j] = p1.ID;
-                                console.log("added ship at " + col + "," + row - j + " to the board");
-                            }
-                            break;
-                        }
-                    } else if (currentDirection == ShipDirection.RIGHT) { // try RIGHT direction
-                        console.log("Reached RIGHT direction");
-                        // same row number, check column numbers to right of randomly generated column
-                        // example: coordinate is (col: 4, row: 5), length = 3 -> then check (5,5) and (6,5) 
-                        for (var j = 1; j < length; j++) {
-                            if (this.board[col + j][row] != 0) {
-                                validPlacement = 0;
-                            }
-                        }
-                        // test validPlacement var
-                        if (validPlacement == 0) {
-                            console.log("col: " + col + ", row: " + row + " doesn't work going RIGHT")
-                        } else {
-                            console.log("col: " + col + ", row: " + row + " works going RIGHT")
-
-                            // create all coordinates for ship array
-                            for (var j = 1; j < length; j++) {
-                                var coordinate = new Coordinate(col + j, row);
-                                coordinates.push(coordinate);
-
-                                // problem is how do we distinguish player 1's ships from each other
-                                this.board[col + j][row] = p1.ID;
-                                console.log("added ship at " + col + j + "," + row + " to the board");
-                            }
-                            break;
-                        }
-                    } else if (currentDirection == ShipDirection.DOWN) { // try DOWN direction
-                        console.log("Reached DOWN direction");
-                        // same column number, check row numbers below randomly generated row
-                        // example: coordinate is (col: 4, row: 5), length = 3 -> then check (4,6) and (4,7) 
-                        for (var j = 1; j < length; j++) {
-                            if (this.board[col][row + j] != 0) {
-                                // console.log("col: " + col + ", row: " + row + " doesn't work")
-                                validPlacement = 0;
-                            }
-                        }
-                        // test validPlacement var
-                        if (validPlacement == 0) {
-                            console.log("col: " + col + ", row: " + row + " doesn't work going DOWN")
-                        } else {
-                            console.log("col: " + col + ", row: " + row + " works going DOWN")
-
-                            // create all coordinates for ship array
-                            for (var j = 1; j < length; j++) {
-                                var coordinate = new Coordinate(col, row + j);
-                                coordinates.push(coordinate);
-
-                                // problem is how do we distinguish player 1's ships from each other
-                                this.board[col][row + j] = p1.ID;
-                                console.log("added ship at " + col + "," + row + j + " to the board");
-                            }
-                            break;
-                        }
-                    } else { //currentDirection must equal LEFT
-                        console.log("Reached LEFT direction");
-                        // same row number, check column numbers to left of randomly generated column
-                        // example: coordinate is (col: 4, row: 5), length = 3 -> then check (3,5) and (2,5) 
-                        for (var j = 1; j < length; j++) {
-                            // if not empty, then this is not valid direction to place ship
-                            if (this.board[col - j][row] != 0) {
-                                validPlacement = 0;
-                            }
-                        }
-                        // test validPlacement var
-                        if (validPlacement == 0) {
-                            console.log("col: " + col + ", row: " + row + " doesn't work going LEFT")
-                        } else { // valid placement of ship at (col, row) going to LEFT
-                            console.log("col: " + col + ", row: " + row + " works going LEFT")
-
-                            // create all coordinates for ship array
-                            for (var j = 1; j < length; j++) {
-                                var coordinate = new Coordinate(col - j, row);
-                                coordinates.push(coordinate);
-
-                                // push ship coordinate to board
-                                // problem is how do we distinguish player 1's ships from each other
-                                this.board[col - j][row] = p1.ID;
-                                console.log("added ship at " + col - j + "," + row + " to the board");
-                            }
-                            break;
-                        }
-                    }
-
-                } // end of for loop to test all four directions
-
-                // if ship can be put in coordinate (col, row) in currentDirection, make new ship 
-                // and add to player board and game board
-                if (validPlacement == 1) {
-                    var ship = new Ship(length, coordinates, currentDirection);
-                    console.log("made ship - length: " + length + ", direction: " + currentDirection);
-                    console.log("made ship - coordinates: " + coordinates);
-                    p1.ships.push(ship);
-                    console.log("added ship to player 1's ships array");
-                }
-
-            }
-
+    
+    // add ship with parameters length, coordinates, direction
+    this.addShip = function(row, col, length, direction, playerID) {
+				var player = this.p1.id == playerID ? this.p1 : this.p2;    
+				var coordinates = [];
+				
+				if (direction == ShipDirection.DOWN) {
+        		console.log("reached addShip DOWN");
+        		for (var r = row; r < row+length; r++) {
+        				var coordinate = new Coordinate(r, col);
+            		coordinates.push(coordinate);
+            		this.board[r][col] = playerID;
+        		}         		
         }
-        /*
-        // add player 1's five ships
-        while (this.p1.ships.length < 5) {
-            var col = Math.floor((Math.random() * this.dimension));
-            var row = Math.floor((Math.random() * this.dimension));
-            
-            // if we find an empty tile, insert id number for player 1's ship into board, update
-            // player1's board, and add coordinates to player 1's array of ships
-            if (this.board[col][row] == 0) {
-                this.board[col][row] = p1.boardID;
-                this.p1_board[col][row] = p1.boardID;
-                        
-                        // use new Coordinate class
-                                var coordinate = new Coordinate(col, row);  
-                this.p1.ships.push(coordinate);
-            }
-            
-        }
-        // add player 2's five ships
-        while (this.p2.ships.length < 5) {
-            var col = Math.floor((Math.random() * this.dimension));
-            var row = Math.floor((Math.random() * this.dimension));
+        else {	// direction == ShipDirection.RIGHT
+       			console.log("reached addShip RIGHT");
+	     			for (var c = col; c < col+length; c++) {
+        				var coordinate = new Coordinate(row, c);
+            		coordinates.push(coordinate);
+            		this.board[row][c] = playerID;
+            }		
+       	} 
+        var ship = new Ship(length, coordinates, direction);
+        player.ships.push(ship);
 
-            // if we find an empty tile, insert id number for player 2's ship into board, update
-            // player1's board, and add coordinates to player 1's array of ships
-            if (this.board[col][row] == 0) {
-                this.board[col][row] = p2.boardID;
-                this.p1_board[col][row] = p2.boardID;
-
-                var coordinate = new Coordinate(col, row);
-                this.p2.ships.push(coordinate);
-            }
-        }
-        */
+       	// on the board, make sure the player's id are on the coordinates of his ship
+        console.log("Board after adding ship");
+        console.log(this.board);  	
     }
+		
+    this.initializeShips = function(playerID) {    
+        var row = 0; 		// y-axis coordinate
+        var col = 0;		// x-axis coordinate	
+				var player = this.p1.id == playerID ? this.p1 : this.p2;
+				
+				// each player will get 2 ships for now
+				while (player.ships.length < 2) {			         
+						// randomly select a ship length between 2 and 5					
+            var length = Math.floor((Math.random() * 4)) + 2;            
+            if (length > this.dimension) {
+            		console.log("ERROR: Length of ship is greater than board size");
+            		break;
+            }
+            // randomly select a direction: down = 0, right = 1 
+            var direction = Math.floor((Math.random() * 2)); 
+            
+            if (direction == ShipDirection.DOWN) {
+            		console.log("Selected DOWN direction");
+								col = Math.floor(Math.random() * this.dimension);		
+             		row = Math.floor(Math.random() * (this.dimension - length + 1));
+            } 
+            else {	
+            		console.log("Selected RIGHT direction");
+								row = Math.floor(Math.random() * this.dimension);		
+             		col = Math.floor(Math.random() * (this.dimension - length + 1));            		
+            }
+                    
+            // if the point (row, col) is empty, check if the tiles that the ship needs to occupy are empty
+        		if (this.board[row][col] == 0) {
+        		
+                console.log("row: " + row + ", col: " + col + " , length: " + length + ", direction: " + direction + ", dimension: " + this.dimension + ", playerID: " + playerID); 
+                var validPlacement = this.checkValidPlacement(row, col, length, direction);    
+                // console.log("board before adding ship");
+        				// console.log(this.board);
+               	if (validPlacement == 0) {
+            				console.log("col: " + col + ", row: " + row + " ,length: " + length + " doesn't work");
+            		}	else {
+            				this.addShip(row, col, length, direction, playerID);    				
+            		}		    						       		
+						}
+        		else {
+        				console.log(row + ", " + col + " is not empty");
+        				console.log(this.board);
+        				console.log("row: " + row + ", col: " + col + ", value: " + this.board[row][col]);
+        		}       		
+				}	// end of while loop for generating 3 ships for player
+				console.log("Reached end of loop to generate ships\n");
+						
+				// make sure Player ships array has ships 
+				for (var i = 0; i < player.ships.length; i++) {
+						console.log("player id: " + playerID + ", ship number: " + (i+1));
+						console.log(player.ships[i]);
+        		// console.log("ship length: " + player.ships[i].length);
+        		// console.log("ship direction: " + player.ships[i].direction);
+       		 	// console.log("start point: " + player.ships[i].coordinates[0].row + ", " + player.ships[i].coordinates[0].col);      	
+        }
+		}	// end of function to generate ships
 
     this.checkValidMove = function(column, row, playerID) {
         var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
@@ -297,7 +224,6 @@ module.exports = function Game(p1, p2) {
                 return false;
             }
         }
-
         return true;
     }
 }
