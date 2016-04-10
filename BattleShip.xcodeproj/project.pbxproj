@@ -173,6 +173,7 @@
 				1C33FADF1C8D02DE008714CB /* GameFinishedScene.swift */,
 				1C33FADB1C8CF83F008714CB /* InitialScene.sks */,
 				1C33FAD71C8CEE3D008714CB /* InitialScene.swift */,
+				1C8C79E01C8E186C00B52468 /* InitialSceneViewController.swift */,
 				7AAEAFCD1C88E0BD0007C971 /* Main.storyboard */,
 				7AAEAFD01C88E0BD0007C971 /* Assets.xcassets */,
 				7AAEAFD21C88E0BD0007C971 /* LaunchScreen.storyboard */,
@@ -180,7 +181,6 @@
 				7AF847FB1C8B6B3500AC64E7 /* Client.swift */,
 				1C8C79DE1C8DF1D900B52468 /* SelectPlayerViewController.swift */,
 				1C359FA21C9E337600E29A5B /* SelectGameViewController.swift */,
-				1C8C79E01C8E186C00B52468 /* InitialSceneViewController.swift */,
 				7AA20AE51C99B575001266F8 /* EndScreenViewController.swift */,
 			);
 			path = BattleShip;
