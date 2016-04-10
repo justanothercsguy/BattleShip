@@ -114,7 +114,7 @@ module.exports = function Game(p1, p2) {
         		for (var r = row; r < row+length; r++) {
         				var coordinate = new Coordinate(r, col);
             		coordinates.push(coordinate);
-            		this.board[r][col] = playerID;
+            		this.board[r][col] = player.boardID;
         		}         		
         }
         else {	// direction == ShipDirection.RIGHT
@@ -122,7 +122,7 @@ module.exports = function Game(p1, p2) {
 	     			for (var c = col; c < col+length; c++) {
         				var coordinate = new Coordinate(row, c);
             		coordinates.push(coordinate);
-            		this.board[row][c] = playerID;
+            		this.board[row][c] = player.boardID;
             }		
        	} 
         var ship = new Ship(length, coordinates, direction);
@@ -130,7 +130,8 @@ module.exports = function Game(p1, p2) {
 
        	// on the board, make sure the player's id are on the coordinates of his ship
         console.log("Board after adding ship");
-        console.log(this.board);  	
+        console.log(this.board); 
+        console.log("\n"); 	
     }
 		
     this.initializeShips = function(playerID) {    
@@ -165,8 +166,7 @@ module.exports = function Game(p1, p2) {
         		
                 console.log("row: " + row + ", col: " + col + " , length: " + length + ", direction: " + direction + ", dimension: " + this.dimension + ", playerID: " + playerID); 
                 var validPlacement = this.checkValidPlacement(row, col, length, direction);    
-                // console.log("board before adding ship");
-        				// console.log(this.board);
+                
                	if (validPlacement == 0) {
             				console.log("col: " + col + ", row: " + row + " ,length: " + length + " doesn't work");
             		}	else {
@@ -175,8 +175,6 @@ module.exports = function Game(p1, p2) {
 						}
         		else {
         				console.log(row + ", " + col + " is not empty");
-        				console.log(this.board);
-        				console.log("row: " + row + ", col: " + col + ", value: " + this.board[row][col]);
         		}       		
 				}	// end of while loop for generating 3 ships for player
 				console.log("Reached end of loop to generate ships\n");
@@ -184,11 +182,9 @@ module.exports = function Game(p1, p2) {
 				// make sure Player ships array has ships 
 				for (var i = 0; i < player.ships.length; i++) {
 						console.log("player id: " + playerID + ", ship number: " + (i+1));
-						console.log(player.ships[i]);
-        		// console.log("ship length: " + player.ships[i].length);
-        		// console.log("ship direction: " + player.ships[i].direction);
-       		 	// console.log("start point: " + player.ships[i].coordinates[0].row + ", " + player.ships[i].coordinates[0].col);      	
+						console.log(player.ships[i]);   	
         }
+        console.log("\n");
 		}	// end of function to generate ships
 
     this.checkValidMove = function(column, row, playerID) {

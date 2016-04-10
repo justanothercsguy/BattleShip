@@ -180,7 +180,9 @@ io.on('connection', function(socket) {
 
 	        var game = new Game(player1, player2);
 	        game.initializeBoard();
-	        game.initializeShips();
+	        // intialize ships using player.id to identify player, then use boardID to fill board
+	        game.initializeShips(player1.id);
+	        game.initializeShips(player2.id);
 	        game.currentTurn = player1.id;
 
 	        games[playerID.toString() + selectedPlayerID.toString()] = game;
@@ -195,9 +197,6 @@ io.on('connection', function(socket) {
 	        socket.emit("initialBoard", player1.getShips());
 	        player2Socket.emit("initialBoard", player2.getShips());
 
-	        // print out player ship array to see if coordinate class worked
-	        console.log(player1.ships);
-	        console.log(player2.ships);
 	    } else {
 	    	// tell original player this player doesn't want to play
 	    	var otherPlayer = clients[selectedPlayerID.toString()];
