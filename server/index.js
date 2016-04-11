@@ -180,22 +180,25 @@ io.on('connection', function(socket) {
 
 	        var game = new Game(player1, player2);
 	        game.initializeBoard();
+   
 	        // intialize ships using player.id to identify player, then use boardID to fill board
-	        game.initializeShips(player1.id);
+	        game.initializeShips(player1.id);       
 	        game.initializeShips(player2.id);
+	        
 	        game.currentTurn = player1.id;
-
 	        games[playerID.toString() + selectedPlayerID.toString()] = game;
 
 	        var player2Socket = clients[selectedPlayerID.toString()].socket;
 
 	        // send size to the players
-	        socket.emit("newGameWithOtherPlayer", game.dimension.toString(), player2.id);
+	        socket.emit("newGameWithOtherPlayer", game.dimension.toString(), player2.id);       
 	        player2Socket.emit("newGameWithOtherPlayer", game.dimension.toString(), player1.id);
 
-	        // send player1's view of board as 2d array to client
+	        // send player1's view of board as 2d array to client - does program crash here?
 	        socket.emit("initialBoard", player1.getShips());
 	        player2Socket.emit("initialBoard", player2.getShips());
+	        // sent everything to client
+	        
 
 	    } else {
 	    	// tell original player this player doesn't want to play
@@ -239,7 +242,7 @@ io.on('connection', function(socket) {
                 console.log("not hit");
                 socket.emit("hitOrMiss", 0);
             }
-            game.board[column][row] = TileState.OCCUPIED;
+            game.board[row][column] = TileState.OCCUPIED;
 
             // other player's turn
             game.currentTurn = p2ID;

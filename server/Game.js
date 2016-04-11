@@ -7,8 +7,7 @@ function Ship(length, coordinates, direction) {
     this.direction = direction;
 }
 
-// enum style object to denote direction of ship
-// we will only use two directions: down and right
+// enum style object to denote direction of ship: down or right
 ShipDirection = {
     DOWN: 0,
     RIGHT: 1
@@ -65,7 +64,7 @@ module.exports = function Game(p1, p2) {
     // between size 8x8 and 24x24, then initialize boards for player 1 and player 2
     this.initializeBoard = function() {
        
-        this.dimension = 10; //Math.floor((Math.random() * 16) + 8);    
+        this.dimension = Math.floor((Math.random() * 4) + 8);    
         for (var i = 0; i < this.dimension; i++) {
             var row = [];
             for (var j = 0; j < this.dimension; j++) {
@@ -140,7 +139,7 @@ module.exports = function Game(p1, p2) {
 				var player = this.p1.id == playerID ? this.p1 : this.p2;
 				
 				// each player will get 2 ships for now
-				while (player.ships.length < 2) {			         
+				while (player.ships.length < 4) {			         
 						// randomly select a ship length between 2 and 5					
             var length = Math.floor((Math.random() * 4)) + 2;            
             if (length > this.dimension) {
@@ -189,7 +188,7 @@ module.exports = function Game(p1, p2) {
 
     this.checkValidMove = function(column, row, playerID) {
         var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
-        var tile = this.board[column][row];
+        var tile = this.board[row][column];
 
         // valid move if the tile is empty or if the tile is a ship of the opposite player
         return tile == TileState.EMPTY || tile == otherPlayer.boardID;
@@ -197,7 +196,7 @@ module.exports = function Game(p1, p2) {
 
     this.checkHit = function(column, row, playerID) {
         var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
-        var tile = this.board[column][row];
+        var tile = this.board[row][column];
 
         // hit if the tile is a ship of the opposite player
         return tile == otherPlayer.boardID;
@@ -207,13 +206,19 @@ module.exports = function Game(p1, p2) {
         var otherPlayer = this.p1.id == playerID ? this.p2 : this.p1;
         var otherPlayerArray = otherPlayer.ships;
 
+				// go through other player ship array
         for (var i = 0; i < otherPlayerArray.length; i++) {
-            var column = otherPlayerArray[i].x;
-            var row = otherPlayerArray[i].y
-
-            // are the other players ships all hit?
-            if (this.board[column][row] == otherPlayer.boardID) {
-                return false;
+						// go through coordinates of a ship in ship array
+						for (var j = 0; j < otherPlayerArray[i].coordinates.length; j++) {						
+						    var column = otherPlayerArray[i].coordinates[j].col;
+            		var row = otherPlayerArray[i].coordinates[j].row;
+            		 
+            		// are the other players ships all hit?          
+            		if (this.board[row][column] == otherPlayer.boardID) {
+            				console.log("value is " + this.board[row][column]);
+            				console.log("other player board id: " + otherPlayer.boardID);
+                		return false;
+           			}
             }
         }
         return true;

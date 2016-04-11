@@ -39,19 +39,41 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
             }
         }
         
+        // need to read through some ship objects
         Client.sharedInstance.socket.on("initialBoard") {[weak self]data, ack in
             if let data = data[0] as? NSArray {
-                print(data)
+                // print(data)
+  
                 // iterate through NSArray to get [col, row] data and add Coordinates(row, col) to shipsArray
                 for index in 0...data.count - 1 {
+                    let shipDictionary = data[index]
+                    let length = shipDictionary["length"]! as! Int
+                    let coordinates_js = shipDictionary["coordinates"]!
+                    var coordinates_swift = [Coordinates]()
+                    // JS and Swift Coordinate objects may be different so iterate through coordinate array and
+                    // convert JS coordinate object to swift coordinate object
+                    for i in 0...coordinates_js!.count - 1 {
+                        let x = coordinates_js![i]["col"] as! Int
+                        let y = coordinates_js![i]["row"] as! Int
+                        let coordinate = Coordinates(xCoord: x, yCoord: y)
+                        coordinates_swift.append(coordinate)
+                    }
+                    
+                    let direction = shipDictionary["direction"] as! Int
+                    let ship = Ship(length: length, coordinates: coordinates_swift, direction: direction)
+                   
+                    /*
                     let coordinateArray = data[index] as! NSDictionary
                     let col = coordinateArray["x"] as! Int
                     let row = coordinateArray["y"] as! Int
                     
                     let newCoordinate = Ship(length: 1, coordinates: [Coordinates(xCoord: col, yCoord: row)])
-                    Client.sharedInstance.shipsArray.append(newCoordinate)
-                    // print(newCoordinate)
+                    */
+                     
+                    Client.sharedInstance.shipsArray.append(ship)
+                    print(ship)
                 }
+                print("ship array: \(Client.sharedInstance.shipsArray.count)")
                 
                 let storyBoard = UIStoryboard(name: "Main", bundle: nil)
                 let gameVC = storyBoard.instantiateViewControllerWithIdentifier("GameViewController") as! GameViewController
