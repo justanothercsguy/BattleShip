@@ -11,6 +11,8 @@ import SpriteKit
 class InitialScene: SKScene {
     var newGameButton: SKSpriteNode!
     var observerButton: SKSpriteNode!
+    var alertController: UIAlertController! // class var so it doesn't get deallocated in touches began until you press okay
+    var vc: InitialSceneViewController!
     
     override func didMoveToView(view: SKView) {
         
@@ -39,6 +41,19 @@ class InitialScene: SKScene {
             
             // touched button, so show new game scene
             if let button = touchedNode {
+                // if socket isn't connected and we are touching the new game or observer button, show UIAlertAction
+                if Client.sharedInstance.socket.status == .NotConnected || Client.sharedInstance.socket.status == .Reconnecting || Client.sharedInstance.socket.status == .Connecting {
+                    if button.name == "newGameButton" || button.name == "observerButton" {
+                        self.alertController = UIAlertController(title: "Not Connected.", message: "You aren't connected to the server.", preferredStyle: .Alert)
+                        
+                        let okAction = UIAlertAction(title: "Okay", style: .Cancel, handler: nil)
+                        
+                        self.alertController.addAction(okAction)
+                        self.vc.presentViewController(self.alertController, animated: true, completion: nil)
+                        return
+                    }
+                }
+                
                 if button.name == "newGameButton" {
                     Client.sharedInstance.socket.emitWithAck("findPlayers", Client.sharedInstance.id)(timeoutAfter: 0, callback: {[weak self] data in
                         //self?.client.socket.emit("selectedPlayer", (self?.client)!.id, 2)
@@ -61,7 +76,7 @@ class InitialScene: SKScene {
                         } else {
                             print("fail")
                         }
-                    })
+                        })
                 } else if button.name == "observerButton" {
                     Client.sharedInstance.socket.emitWithAck("findGames", Client.sharedInstance.id)(timeoutAfter: 0, callback: {[weak self] data in
                         //self?.client.socket.emit("selectedPlayer", (self?.client)!.id, 2)
@@ -82,7 +97,7 @@ class InitialScene: SKScene {
                         } else {
                             print("fail")
                         }
-                    })
+                        })
                 }
             }
         }

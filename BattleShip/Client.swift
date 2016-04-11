@@ -20,6 +20,7 @@ struct Coordinates {
 struct Ship {
     var length: Int
     var coordinates: [Coordinates]
+    var direction: Int
 }
 
 class Client {
@@ -27,7 +28,7 @@ class Client {
     static let sharedInstance = Client()
     
     // change 192.168.1.64 to your local ip address
-    let socket = SocketIOClient(socketURL: NSURL(string: "http://battleship.mybluemix.net:80")!, options: [.Log(false), .ForcePolling(true)])
+    let socket = SocketIOClient(socketURL: NSURL(string: "http://10.223.120.214:3000")!, options: [.Log(false), .ForcePolling(true)])
     var id: Int!
     var otherPlayerID: Int!
     var gameWon = false

@@ -82,19 +82,20 @@ class GameScene: SKScene {
                 self.addChild(tile.sprite!)
             }
         }
-        // add ships to GameBoard - this part is crashing
+        
+        // add ships to GameBoard - now add sprite for each coordinate in a ship object
         let ships = Client.sharedInstance.shipsArray
-        for index in 0...ships.count - 1 {
-            // tile that we need to add ship_sprite to
-            let tile = game_board.tiles[ships[index].coordinates[0].yCoord][ships[index].coordinates[0].xCoord]
-            let ship = SKSpriteNode(imageNamed: "battleship")
-            ship.position = tile.sprite!.position
-            ship.size = tile.sprite!.size
-            
-            // if I set ship to same size as tile sprite, then ship sprite prevents tile from 
-            // getting registered as a valid move and showing an x mark
-            // ship.setScale(0.5)
-            self.addChild(ship)
+        // iterate through ships array
+        for i in 0...ships.count - 1 {
+            // iterate through coordinates array of a ship object in ships array
+            for j in 0...ships[i].coordinates.count - 1 {
+                // tile that we need to add ship_sprite to
+                let tile = game_board.tiles[ships[i].coordinates[j].yCoord][ships[i].coordinates[j].xCoord]
+                let ship = SKSpriteNode(imageNamed: "battleship")
+                ship.position = tile.sprite!.position
+                ship.size = tile.sprite!.size
+                self.addChild(ship)
+            }
         }
         // add label to tell if player hit or miss
         self.myLabel = SKLabelNode(fontNamed: "Arial")

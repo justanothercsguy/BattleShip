@@ -8,9 +8,11 @@
 
 import UIKit
 
-class SelectGameViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class SelectGameViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UINavigationBarDelegate {
 
     @IBOutlet weak var gamesTableView: UITableView!
+    @IBOutlet weak var navBar: UINavigationBar!
+    
     var games: NSArray!
     let TILE_EMPTY = 0
     let TILE_OCCUPIED = 3
@@ -21,6 +23,7 @@ class SelectGameViewController: UIViewController, UITableViewDataSource, UITable
         // Do any additional setup after loading the view.
         self.gamesTableView.dataSource = self
         self.gamesTableView.delegate = self
+        self.navBar.delegate = self
         
         Client.sharedInstance.socket.on("initialObserverBoard") {[weak self]data, ack in
             if let ships = data[0] as? NSArray {
@@ -36,7 +39,7 @@ class SelectGameViewController: UIViewController, UITableViewDataSource, UITable
                             // need to add x and y coordinates to ship array
                             
                             // wait what if we have to do the x and y reversal for the client and server
-                            let coordinate = Ship(length: 1, coordinates: [Coordinates(xCoord: row, yCoord: col)])
+                            let coordinate = Ship(length: 1, coordinates: [Coordinates(xCoord: row, yCoord: col)], direction: 0)    // harcode direction to DOWN
                             Client.sharedInstance.shipsArray.append(coordinate)
                         }
                     }
@@ -82,6 +85,11 @@ class SelectGameViewController: UIViewController, UITableViewDataSource, UITable
                 print("error creating game")
             }
         })
+    }
+    
+    // called by nav bar delegate - to make nav bar be to the top of the screen
+    func positionForBar(bar: UIBarPositioning) -> UIBarPosition {
+        return UIBarPosition.TopAttached
     }
 
     @IBAction func cancelButtonPressed(sender: AnyObject) {
