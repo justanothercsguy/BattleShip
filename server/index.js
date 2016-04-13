@@ -1,6 +1,27 @@
-var app = require('express')();
+// This application uses express as its web server
+// for more info, see: http://expressjs.com
+var express = require('express');
+
+// cfenv provides access to your Cloud Foundry environment
+// for more info, see: https://www.npmjs.com/package/cfenv
+var cfenv = require('cfenv');
+
+// create a new express server
+var app = express();
+
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+
+// serve the files out of ./public as our main files
+app.use(express.static(__dirname + '/public'));
+
+// get the app environment from Cloud Foundry
+var appEnv = cfenv.getAppEnv();
+
+http.listen(appEnv.port, function() {
+    console.log('listening on *:3000');
+});
+
 var Player = require('./Player');
 var Game = require('./Game.js');
 
@@ -280,8 +301,4 @@ io.on('connection', function(socket) {
             fn("invalid");
         }
     });
-});
-
-http.listen(3000, function() {
-    console.log('listening on *:3000');
 });

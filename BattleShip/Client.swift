@@ -28,7 +28,7 @@ class Client {
     static let sharedInstance = Client()
     
     // change 192.168.1.64 to your local ip address
-    let socket = SocketIOClient(socketURL: NSURL(string: "http://10.223.120.214:3000")!, options: [.Log(false), .ForcePolling(true)])
+    let socket = SocketIOClient(socketURL: NSURL(string: "http://battleship.mybluemix.net/:80")!, options: [.Log(false), .ForcePolling(true)])
     var id: Int!
     var otherPlayerID: Int!
     var gameWon = false
@@ -65,6 +65,10 @@ class Client {
             // nothing else seems to work, have to do it this way to get the data out
             self?.gameboardSize = Int(String(data[0]))
             self?.otherPlayerID = Int(String(data[1]))
+        }
+        
+        self.socket.on("disconnect") {[weak self] data, ack in
+            print(data)
         }
         
         socket.connect()

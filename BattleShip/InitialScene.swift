@@ -59,7 +59,6 @@ class InitialScene: SKScene {
                         //self?.client.socket.emit("selectedPlayer", (self?.client)!.id, 2)
                         
                         if let players = data[0] as? NSArray {
-                            let vc = self?.view?.window?.rootViewController
                             let storyBoard = UIStoryboard(name: "Main", bundle: nil)
                             let selectPlayerVC = storyBoard.instantiateViewControllerWithIdentifier("SelectPlayerViewController") as! SelectPlayerViewController
                             
@@ -72,7 +71,7 @@ class InitialScene: SKScene {
                             }
                             
                             selectPlayerVC.players = otherPlayers.copy() as! NSArray
-                            vc?.presentViewController(selectPlayerVC, animated: true, completion: nil)
+                            self?.vc?.presentViewController(selectPlayerVC, animated: true, completion: nil)
                         } else {
                             print("fail")
                         }
@@ -81,7 +80,6 @@ class InitialScene: SKScene {
                     Client.sharedInstance.socket.emitWithAck("findGames", Client.sharedInstance.id)(timeoutAfter: 0, callback: {[weak self] data in
                         //self?.client.socket.emit("selectedPlayer", (self?.client)!.id, 2)
                         if let players = data[0] as? NSArray {
-                            let vc = self?.view?.window?.rootViewController
                             let storyBoard = UIStoryboard(name: "Main", bundle: nil)
                             let selectPlayerVC = storyBoard.instantiateViewControllerWithIdentifier("SelectGameViewController") as! SelectGameViewController
                             
@@ -92,7 +90,7 @@ class InitialScene: SKScene {
                             }
                             
                             selectPlayerVC.games = games.copy() as! NSArray
-                            vc?.presentViewController(selectPlayerVC, animated: true, completion: nil)
+                            self?.vc?.presentViewController(selectPlayerVC, animated: true, completion: nil)
                             Client.sharedInstance.isObserver = true
                         } else {
                             print("fail")
