@@ -39,7 +39,7 @@ class SelectGameViewController: UIViewController, UITableViewDataSource, UITable
                             // need to add x and y coordinates to ship array
                             
                             // wait what if we have to do the x and y reversal for the client and server
-                            let coordinate = Ship(length: 1, coordinates: [Coordinates(xCoord: row, yCoord: col)], direction: 0)    // harcode direction to DOWN
+                            let coordinate = Ship(length: 1, coordinates: [Coordinates(xCoord: col, yCoord: row)], direction: 0)    // harcode direction to DOWN
                             Client.sharedInstance.shipsArray.append(coordinate)
                         }
                     }

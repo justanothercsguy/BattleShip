@@ -2,10 +2,6 @@
 // for more info, see: http://expressjs.com
 var express = require('express');
 
-// cfenv provides access to your Cloud Foundry environment
-// for more info, see: https://www.npmjs.com/package/cfenv
-var cfenv = require('cfenv');
-
 // create a new express server
 var app = express();
 
@@ -16,9 +12,8 @@ var io = require('socket.io')(http);
 app.use(express.static(__dirname + '/public'));
 
 // get the app environment from Cloud Foundry
-var appEnv = cfenv.getAppEnv();
 
-http.listen(appEnv.port, function() {
+http.listen(3000, function() {
     console.log('listening on *:3000');
 });
 
@@ -276,8 +271,8 @@ io.on('connection', function(socket) {
 
             // send to observerSocket the state of the board after a move
             // need to test if observer gets initial socket before implementing this code
-            for (var observerSocket in game.observerSockets) {
-                observerSocket.emit("otherPlayerMoved", column, row);
+            for (var i = 0; i < game.observerSockets.length; i++) {
+                game.observerSockets[i].emit("otherPlayerMoved", column, row);
             }
             // 1 = won, 0 = lose
             if (game.won(p1ID)) {
@@ -285,16 +280,16 @@ io.on('connection', function(socket) {
                 p2Socket.emit("won", 0);
 
                 // if there is observer send ID of player that won       
-                for (var observerSocket in game.observerSockets) {
-                    observerSocket.emit("someoneWon", p1ID);
+                for (var i = 0; i < game.observerSockets.length; i++) {
+                    game.observerSockets[i].emit("someoneWon", p1ID);
                 }
 
             } else if (game.won(p2ID)) {
                 socket.emit("won", 0);
                 p2Socket.emit("won", 1);
 
-                for (var observerSocket in game.observerSockets) {
-                    observerSocket.emit("someoneWon", p2ID);
+                for (var i = 0; i < game.observerSockets.length; i++) {
+                    game.observerSockets[i].emit("someoneWon", p2ID);
                 }
             }
         } else {
