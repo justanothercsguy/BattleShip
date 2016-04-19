@@ -31,10 +31,6 @@ class GameScene: SKScene {
         scene!.addChild(cameraNode)
         scene!.camera = cameraNode
         
-        // tap recognizer for zooming in
-        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(GameScene.tappedOnScene(_:)))
-        self.view?.addGestureRecognizer(tapRecognizer)
-        
         // if observer, receive message on who won
         Client.sharedInstance.socket.on("someoneWon") {[weak self] data, ack in
             
@@ -133,6 +129,7 @@ class GameScene: SKScene {
         }
         
         for touch in touches {
+            print(touches.count)
             let touchedNode = self.getTouchedNode(touch.locationInView(self.view))
             let touchedTile = self.game_board.tileFromName(touchedNode?.name)
             
@@ -146,6 +143,16 @@ class GameScene: SKScene {
                         print("invalid move")
                     }
                 })
+            } else {
+                 if event?.allTouches()?.count == 1 {
+                    self.currentScale *= CGFloat(0.80)
+                    let zoomInAction: SKAction! = SKAction.scaleTo(self.currentScale, duration: 1)
+                    self.cameraNode.runAction(zoomInAction)
+                 } else if event?.allTouches()?.count == 2 {
+                    self.currentScale *= CGFloat(1.25)
+                    let zoomInAction: SKAction! = SKAction.scaleTo(self.currentScale, duration: 1)
+                    self.cameraNode.runAction(zoomInAction)
+                }
             }
         }
     }
