@@ -2,6 +2,9 @@
 // for more info, see: http://expressjs.com
 var express = require('express');
 
+// for bluemix, uncomment for local development
+var cfenv = require('cfenv');
+
 // create a new express server
 var app = express();
 
@@ -11,10 +14,17 @@ var io = require('socket.io')(http);
 // serve the files out of ./public as our main files
 app.use(express.static(__dirname + '/public'));
 
-// get the app environment from Cloud Foundry
+// for bluemix, uncomment for local development
+var appEnv = cfenv.getAppEnv();
 
-http.listen(3000, function() {
-    console.log('listening on *:3000');
+// for local development
+// http.listen(3000, function() {
+//     console.log('listening on *:3000');
+// });
+
+// for bluemix
+http.listen(appEnv.port, function() {
+    console.log('listening on *:' + appEnv.port);
 });
 
 var Player = require('./Player');

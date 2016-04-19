@@ -20,6 +20,7 @@ class EndScreenViewController: UIViewController, UINavigationBarDelegate {
         // Do any additional setup after loading the view.
         self.end_message.text = string
         self.navBar.delegate = self
+        Client.sharedInstance.setupHandlersAndConnect()
     }
 
     override func didReceiveMemoryWarning() {
@@ -28,10 +29,27 @@ class EndScreenViewController: UIViewController, UINavigationBarDelegate {
     }
     
     @IBAction func newGamePressed(sender: AnyObject) {
-        let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-        let selectPlayerVC = storyBoard.instantiateViewControllerWithIdentifier("selectPlayerViewController") as! SelectPlayerViewController
-        
-        self.presentViewController(selectPlayerVC, animated: true, completion: nil)
+        Client.sharedInstance.socket.emitWithAck("findPlayers", Client.sharedInstance.id)(timeoutAfter: 0, callback: {[weak self] data in
+            //self?.client.socket.emit("selectedPlayer", (self?.client)!.id, 2)
+            
+            if let players = data[0] as? NSArray {
+                let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+                let selectPlayerVC = storyBoard.instantiateViewControllerWithIdentifier("SelectPlayerViewController") as! SelectPlayerViewController
+                
+                // add data to table view controller
+                let otherPlayers = NSMutableArray()
+                for player in players {
+                    if player as! Int != Client.sharedInstance.id {
+                        otherPlayers.addObject(player)
+                    }
+                }
+                
+                selectPlayerVC.players = otherPlayers.copy() as! NSArray
+                self?.presentViewController(selectPlayerVC, animated: true, completion: nil)
+            } else {
+                print("fail")
+            }
+        })
     }
 
     @IBAction func returnToMainScreenPressed(sender: AnyObject) {

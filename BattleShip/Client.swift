@@ -28,7 +28,7 @@ class Client {
     static let sharedInstance = Client()
     
     // (string: "http://10.221.125.140:3000"
-    let socket = SocketIOClient(socketURL: NSURL(string: "http://battleship.mybluemix.net/:80")!, options: [.Log(false), .ForcePolling(true)])
+    let socket = SocketIOClient(socketURL: NSURL(string: "http://192.168.1.64:3000")!, options: [.Log(false), .ForcePolling(true)])
     var id: Int!
     var otherPlayerID: Int!
     var gameWon = false

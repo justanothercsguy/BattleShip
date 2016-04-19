@@ -75,7 +75,7 @@ class InitialScene: SKScene {
                         } else {
                             print("fail")
                         }
-                        })
+                    })
                 } else if button.name == "observerButton" {
                     Client.sharedInstance.socket.emitWithAck("findGames", Client.sharedInstance.id)(timeoutAfter: 0, callback: {[weak self] data in
                         //self?.client.socket.emit("selectedPlayer", (self?.client)!.id, 2)
