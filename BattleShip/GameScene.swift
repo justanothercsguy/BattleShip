@@ -164,23 +164,18 @@ class GameScene: SKScene {
         return touchedSprite
     }
     
-    var test = false
     
     func tappedOnScene(recognizer: UITapGestureRecognizer) {
         var zoomInAction: SKAction! = nil
         
-        //if recognizer.numberOfTouches() == 1 {
-        if test {
+        if recognizer.numberOfTouches() == 1 {
             self.currentScale *= CGFloat(0.80)
             zoomInAction = SKAction.scaleTo(self.currentScale, duration: 1)
-        } else {
+        } else if recognizer.numberOfTouches() == 2 {
             self.currentScale *= CGFloat(1.25)
             zoomInAction = SKAction.scaleTo(self.currentScale, duration: 1)
         }
-        test = !test
-        //} else if recognizer.numberOfTouches() == 2 {
-            //zoomInAction = SKAction.scaleTo(1.25, duration: 1)
-        //}
+        
         self.cameraNode.runAction(zoomInAction)
     }
     

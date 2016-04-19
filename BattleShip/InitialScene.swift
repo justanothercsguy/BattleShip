@@ -13,11 +13,13 @@ class InitialScene: SKScene {
     var observerButton: SKSpriteNode!
     var alertController: UIAlertController! // class var so it doesn't get deallocated in touches began until you press okay
     var vc: InitialSceneViewController!
+    var gameNameLabel: SKLabelNode!
     
     override func didMoveToView(view: SKView) {
         
         self.newGameButton = SKSpriteNode(imageNamed: "play_button")
         self.observerButton = SKSpriteNode(imageNamed: "observer_button")
+        self.gameNameLabel = childNodeWithName("gameNameLabel") as! SKLabelNode
         self.newGameButton.name = "newGameButton"
         self.observerButton.name = "observerButton"
         Client.sharedInstance.setupHandlersAndConnect()
@@ -30,6 +32,8 @@ class InitialScene: SKScene {
         // Make play start at top third of screen and observer button stop at bottom third of screen
         self.newGameButton.position = CGPointMake(frame.width / 2, frame.height / 1.5)
         self.observerButton.position = CGPointMake(frame.width / 2, frame.height / 3)
+        self.gameNameLabel.position = CGPointMake(frame.midX, (frame.height - 0.3 * frame.midY))
+        self.gameNameLabel.text = "BattleShip"
         self.addChild(self.newGameButton)
         self.addChild(self.observerButton)
     }
