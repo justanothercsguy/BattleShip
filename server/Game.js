@@ -64,7 +64,7 @@ module.exports = function Game(p1, p2) {
     // between size 8x8 and 24x24, then initialize boards for player 1 and player 2
     this.initializeBoard = function() {
 
-        this.dimension = Math.floor((Math.random() * 4) + 8);
+        this.dimension = Math.floor((Math.random() * 24) + 8);
         for (var i = 0; i < this.dimension; i++) {
             var row = [];
             for (var j = 0; j < this.dimension; j++) {

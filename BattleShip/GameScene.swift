@@ -33,7 +33,6 @@ class GameScene: SKScene {
         
         // tap recognizer for zooming in
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(GameScene.tappedOnScene(_:)))
-        tapRecognizer.numberOfTapsRequired = 2
         self.view?.addGestureRecognizer(tapRecognizer)
         
         // if observer, receive message on who won

@@ -108,7 +108,8 @@ function getAllPlayers() {
     var players = [];
 
     for (var key in playersAvailableToPlay) {
-        players.push(playersAvailableToPlay[key].id);
+        var player = playersAvailableToPlay[key];
+        players.push(player.id);
     }
 
     return players;
@@ -286,6 +287,7 @@ io.on('connection', function(socket) {
             }
             // 1 = won, 0 = lose
             if (game.won(p1ID)) {
+                player1.score++;
                 socket.emit("won", 1);
                 p2Socket.emit("won", 0);
 
@@ -295,6 +297,7 @@ io.on('connection', function(socket) {
                 }
 
             } else if (game.won(p2ID)) {
+                player2.score++;
                 socket.emit("won", 0);
                 p2Socket.emit("won", 1);
 
