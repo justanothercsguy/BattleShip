@@ -25,14 +25,14 @@ function Player(id, socket) {
 }
 // coordinate class: x = column number, y = row number
 function Coordinate(x, y) {
-		this.x = x;
-		this.y = y;
+    this.x = x;
+    this.y = y;
 }
 
 // Ship class: length of ship and array of coordinates that ship occupies
 function Ship(length, coordinates) {
-		this.length = length;
-		this.coordinates = coordinates;
+    this.length = length;
+    this.coordinates = coordinates;
 }
 
 // enum style object to denote empty and occupied tiles
@@ -47,7 +47,7 @@ function Game(p1, p2) {
     this.p1 = p1;
     this.p2 = p2;
     this.currentTurn = 0;
-    
+
     // Socket that sends message to observer != null
     this.observerSocket = null;
 
@@ -104,24 +104,24 @@ function Game(p1, p2) {
         while (this.p1.ships.length < 5) {
             var col = Math.floor((Math.random() * this.dimension));
             var row = Math.floor((Math.random() * this.dimension));
-            
+
             // if we find an empty tile, insert id number for player 1's ship into board, update
             // player1's board, and add coordinates to player 1's array of ships
             if (this.board[col][row] == 0) {
                 this.board[col][row] = p1.boardID;
                 this.p1_board[col][row] = p1.boardID;
-							
-						/* original code
+
+                /* original code
                 var coordinate = {
                     x: col,
                     y: row
                 };*/
-						
-						// use new Coordinate class
-								var coordinate = new Coordinate(col, row);	
+
+                // use new Coordinate class
+                var coordinate = new Coordinate(col, row);
                 this.p1.ships.push(coordinate);
             }
-            
+
         }
         // add player 2's five ships
         while (this.p2.ships.length < 5) {
@@ -300,16 +300,16 @@ io.on('connection', function(socket) {
         // send the other players
         fn(getAllGames());
     });
-    
+
     // observer wants to find active game to observe - when observer clicks this.observerSocket != null
     // server sends observer dimensions of initial board and the board itself
-    socket.on("selectedGame", function(selectedGameID, fn) {    
-    		var game = games[selectedGameID.toString()];
-    		game.observerSocket = socket;
-    		fn(game.dimension.toString());   
-    		console.log(game.board);
-    		socket.emit("initialObserverBoard", game.board);
-    					
+    socket.on("selectedGame", function(selectedGameID, fn) {
+        var game = games[selectedGameID.toString()];
+        game.observerSocket = socket;
+        fn(game.dimension.toString());
+        console.log(game.board);
+        socket.emit("initialObserverBoard", game.board);
+
     });
 
     socket.on("selectedPlayer", function(playerID, selectedPlayerID, fn) {
@@ -343,7 +343,7 @@ io.on('connection', function(socket) {
         // send player1's view of board as 2d array to client
         socket.emit("initialBoard", player1.getShips());
         player2Socket.emit("initialBoard", player2.getShips());
-        
+
         // print out player ship array to see if coordinate class worked
         console.log(player1.ships);
         console.log(player2.ships);
@@ -395,30 +395,30 @@ io.on('connection', function(socket) {
 
             // send to the other player the move the first player made
             p2Socket.emit("otherPlayerMoved", column, row);
-            
+
             // send to observerSocket the state of the board after a move
             // need to test if observer gets initial socket before implementing this code
             if (game.observerSocket != null) {
-            		game.observerSocket.emit("otherPlayerMoved", column, row);
+                game.observerSocket.emit("otherPlayerMoved", column, row);
             }
-						// 1 = won, 0 = lose
+            // 1 = won, 0 = lose
             if (game.won(p1ID)) {
                 socket.emit("won", 1);
                 p2Socket.emit("won", 0);
-            		   
-            		// if there is observer send ID of player that won       
-            		if (game.observerSocket !== null) {
-            				game.observerSocket.emit("someoneWon", p1ID); 
-            		}
-            		
+
+                // if there is observer send ID of player that won       
+                if (game.observerSocket !== null) {
+                    game.observerSocket.emit("someoneWon", p1ID);
+                }
+
             } else if (game.won(p2ID)) {
                 socket.emit("won", 0);
-                p2Socket.emit("won", 1); 
-                            
-            		if (game.observerSocket !== null) {
-            				game.observerSocket.emit("someoneWon", p2ID);
-            		}
-            }            
+                p2Socket.emit("won", 1);
+
+                if (game.observerSocket !== null) {
+                    game.observerSocket.emit("someoneWon", p2ID);
+                }
+            }
         } else {
             fn("invalid");
         }

@@ -38,7 +38,7 @@ app.get('/', function(req, res) {
 // coordinate class: row = index of 1d array in the 2d array, row number = index of value in 1d array
 function Coordinate(row, col) {
     this.row = row;
-		this.col = col;
+    this.col = col;
 }
 
 // Ship class: length of ship and array of coordinates that ship occupies
@@ -163,8 +163,8 @@ io.on('connection', function(socket) {
     });
 
     socket.on("notInterestedInGame", function(playerID) {
-    	delete playersAvailableToPlay[playerID.toString()];
-    	socket.broadcast.emit("availablePlayers", getAllPlayers());
+        delete playersAvailableToPlay[playerID.toString()];
+        socket.broadcast.emit("availablePlayers", getAllPlayers());
     });
 
     // client wants to find active games
@@ -186,51 +186,51 @@ io.on('connection', function(socket) {
     });
 
     socket.on("selectedPlayer", function(playerID, selectedPlayerID, fn) {
-    	var otherPlayer = clients[selectedPlayerID.toString()];
-    	otherPlayer.socket.emit("agreeToGame", playerID)
+        var otherPlayer = clients[selectedPlayerID.toString()];
+        otherPlayer.socket.emit("agreeToGame", playerID)
     });
 
     socket.on("agreesToGame", function(playerID, selectedPlayerID, agrees) {
-    	if (agrees) {
-	    	// remove these players from those available to start a game with, as they aren't available anymore
-	        delete playersAvailableToPlay[playerID.toString()];
-	        delete playersAvailableToPlay[selectedPlayerID.toString()];
-	        // update avaialble players for each connected client
-	        socket.broadcast.emit("availablePlayers", getAllPlayers());
+        if (agrees) {
+            // remove these players from those available to start a game with, as they aren't available anymore
+            delete playersAvailableToPlay[playerID.toString()];
+            delete playersAvailableToPlay[selectedPlayerID.toString()];
+            // update avaialble players for each connected client
+            socket.broadcast.emit("availablePlayers", getAllPlayers());
 
-	        var player1 = clients[playerID.toString()];
-	        var player2 = clients[selectedPlayerID.toString()];
+            var player1 = clients[playerID.toString()];
+            var player2 = clients[selectedPlayerID.toString()];
 
-	        player1.boardID = 1;
-	        player2.boardID = 2;
+            player1.boardID = 1;
+            player2.boardID = 2;
 
-	        var game = new Game(player1, player2);
-	        game.initializeBoard();
-   
-	        // intialize ships using player.id to identify player, then use boardID to fill board
-	        game.initializeShips(player1.id);       
-	        game.initializeShips(player2.id);
-	        
-	        game.currentTurn = player1.id;
-	        games[playerID.toString() + selectedPlayerID.toString()] = game;
+            var game = new Game(player1, player2);
+            game.initializeBoard();
 
-	        var player2Socket = clients[selectedPlayerID.toString()].socket;
+            // intialize ships using player.id to identify player, then use boardID to fill board
+            game.initializeShips(player1.id);
+            game.initializeShips(player2.id);
 
-	        // send size to the players
-	        socket.emit("newGameWithOtherPlayer", game.dimension.toString(), player2.id);       
-	        player2Socket.emit("newGameWithOtherPlayer", game.dimension.toString(), player1.id);
+            game.currentTurn = player1.id;
+            games[playerID.toString() + selectedPlayerID.toString()] = game;
 
-	        // send player1's view of board as 2d array to client - does program crash here?
-	        socket.emit("initialBoard", player1.getShips());
-	        player2Socket.emit("initialBoard", player2.getShips());
-	        // sent everything to client
-	        
+            var player2Socket = clients[selectedPlayerID.toString()].socket;
 
-	    } else {
-	    	// tell original player this player doesn't want to play
-	    	var otherPlayer = clients[selectedPlayerID.toString()];
-	    	otherPlayer.socket.emit("playerDisagreed");
-	    }
+            // send size to the players
+            socket.emit("newGameWithOtherPlayer", game.dimension.toString(), player2.id);
+            player2Socket.emit("newGameWithOtherPlayer", game.dimension.toString(), player1.id);
+
+            // send player1's view of board as 2d array to client - does program crash here?
+            socket.emit("initialBoard", player1.getShips());
+            player2Socket.emit("initialBoard", player2.getShips());
+            // sent everything to client
+
+
+        } else {
+            // tell original player this player doesn't want to play
+            var otherPlayer = clients[selectedPlayerID.toString()];
+            otherPlayer.socket.emit("playerDisagreed");
+        }
     });
 
     // this will be emitted with ack, fn is the function we use to ack
