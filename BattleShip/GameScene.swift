@@ -128,10 +128,6 @@ class GameScene: SKScene {
         /* Called when a touch begins */
         
         for touch in touches {
-            print(touches.count)
-            let touchedNode = self.getTouchedNode(touch.locationInView(self.view))
-            let touchedTile = self.game_board.tileFromName(touchedNode?.name)
-            
             // move camera, zoom in and out
             self.cameraNode.position = touch.locationInView(self.view)
             if event?.allTouches()?.count == 2 {
@@ -147,6 +143,10 @@ class GameScene: SKScene {
             if Client.sharedInstance.isObserver {
                 return
             }
+            
+            print(touches.count)
+            let touchedNode = self.getTouchedNode(touch.locationInView(self.view))
+            let touchedTile = self.game_board.tileFromName(touchedNode?.name)
             
             if let tile = touchedTile {
                 Client.sharedInstance.socket.emitWithAck("playerTappedBoard", Client.sharedInstance.id, Client.sharedInstance.otherPlayerID, tile.column, tile.row)(timeoutAfter: 0, callback: {data in
