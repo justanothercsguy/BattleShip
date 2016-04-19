@@ -126,9 +126,6 @@ class GameScene: SKScene {
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         /* Called when a touch begins */
-        if Client.sharedInstance.isObserver {
-            return
-        }
         
         for touch in touches {
             print(touches.count)
@@ -145,6 +142,10 @@ class GameScene: SKScene {
                 self.currentScale *= CGFloat(1.25)
                 let zoomInAction: SKAction! = SKAction.scaleTo(self.currentScale, duration: 1)
                 self.cameraNode.runAction(zoomInAction)
+            }
+            
+            if Client.sharedInstance.isObserver {
+                return
             }
             
             if let tile = touchedTile {
