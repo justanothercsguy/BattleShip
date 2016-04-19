@@ -27,7 +27,7 @@ class Client {
     // make this a singleton
     static let sharedInstance = Client()
     
-    // change 192.168.1.64 to your local ip address
+    // (string: "http://10.221.125.140:3000"
     let socket = SocketIOClient(socketURL: NSURL(string: "http://battleship.mybluemix.net/:80")!, options: [.Log(false), .ForcePolling(true)])
     var id: Int!
     var otherPlayerID: Int!
