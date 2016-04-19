@@ -129,18 +129,17 @@ class GameScene: SKScene {
         
         for touch in touches {
             // move camera, zoom in and out
-            self.cameraNode.position = touch.locationInView(self.view)
-            if event?.allTouches()?.count == 2 {
-                self.currentScale *= CGFloat(0.80)
-                let zoomInAction: SKAction! = SKAction.scaleTo(self.currentScale, duration: 0.3)
-                self.cameraNode.runAction(zoomInAction)
-            } else if event?.allTouches()?.count == 3 {
-                self.currentScale *= CGFloat(1.25)
-                let zoomInAction: SKAction! = SKAction.scaleTo(self.currentScale, duration: 1)
-                self.cameraNode.runAction(zoomInAction)
-            }
-            
             if Client.sharedInstance.isObserver {
+                self.cameraNode.position = touch.locationInView(self.view)
+                if event?.allTouches()?.count == 2 {
+                    self.currentScale *= CGFloat(0.80)
+                    let zoomInAction: SKAction! = SKAction.scaleTo(self.currentScale, duration: 0.3)
+                    self.cameraNode.runAction(zoomInAction)
+                } else if event?.allTouches()?.count == 3 {
+                    self.currentScale *= CGFloat(1.25)
+                    let zoomInAction: SKAction! = SKAction.scaleTo(self.currentScale, duration: 1)
+                    self.cameraNode.runAction(zoomInAction)
+                }
                 return
             }
             
@@ -158,6 +157,17 @@ class GameScene: SKScene {
                         print("invalid move")
                     }
                 })
+            } else {
+                self.cameraNode.position = touch.locationInView(self.view)
+                if event?.allTouches()?.count == 2 {
+                    self.currentScale *= CGFloat(0.80)
+                    let zoomInAction: SKAction! = SKAction.scaleTo(self.currentScale, duration: 0.3)
+                    self.cameraNode.runAction(zoomInAction)
+                } else if event?.allTouches()?.count == 3 {
+                    self.currentScale *= CGFloat(1.25)
+                    let zoomInAction: SKAction! = SKAction.scaleTo(self.currentScale, duration: 1)
+                    self.cameraNode.runAction(zoomInAction)
+                }
             }
         }
     }
