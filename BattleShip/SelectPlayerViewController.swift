@@ -71,9 +71,9 @@ class SelectPlayerViewController: UIViewController, UITableViewDataSource, UITab
                     */
                      
                     Client.sharedInstance.shipsArray.append(ship)
-                    print(ship)
+                    //print(ship)
                 }
-                print("ship array: \(Client.sharedInstance.shipsArray.count)")
+                //print("ship array: \(Client.sharedInstance.shipsArray.count)")
                 
                 let storyBoard = UIStoryboard(name: "Main", bundle: nil)
                 let gameVC = storyBoard.instantiateViewControllerWithIdentifier("GameViewController") as! GameViewController

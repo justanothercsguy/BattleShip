@@ -17,10 +17,24 @@ class GameScene: SKScene {
     var gameTimer: NSTimer!
     var vc: GameViewController!
     var myLabel: SKLabelNode!
+    var cameraNode: SKCameraNode!
+    var currentScale: CGFloat = CGFloat(0.80)
     
     override func didMoveToView(view: SKView) {
         // gamescene.sks messes up view, let's fix that
         self.size = view.bounds.size
+        self.currentScale = 1.0
+  
+        // add camera to allow for zooming in and out
+        self.cameraNode = SKCameraNode()
+        cameraNode.position = CGPoint(x: scene!.size.width / 2, y: scene!.size.height / 2)
+        scene!.addChild(cameraNode)
+        scene!.camera = cameraNode
+        
+        // tap recognizer for zooming in
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(GameScene.tappedOnScene(_:)))
+        tapRecognizer.numberOfTapsRequired = 2
+        self.view?.addGestureRecognizer(tapRecognizer)
         
         // if observer, receive message on who won
         Client.sharedInstance.socket.on("someoneWon") {[weak self] data, ack in
@@ -148,6 +162,26 @@ class GameScene: SKScene {
         let touchedSprite = self.nodeAtPoint(convertedPosition)
         
         return touchedSprite
+    }
+    
+    var test = false
+    
+    func tappedOnScene(recognizer: UITapGestureRecognizer) {
+        var zoomInAction: SKAction! = nil
+        
+        //if recognizer.numberOfTouches() == 1 {
+        if test {
+            self.currentScale *= CGFloat(0.80)
+            zoomInAction = SKAction.scaleTo(self.currentScale, duration: 1)
+        } else {
+            self.currentScale *= CGFloat(1.25)
+            zoomInAction = SKAction.scaleTo(self.currentScale, duration: 1)
+        }
+        test = !test
+        //} else if recognizer.numberOfTouches() == 2 {
+            //zoomInAction = SKAction.scaleTo(1.25, duration: 1)
+        //}
+        self.cameraNode.runAction(zoomInAction)
     }
     
     func drawHitSpriteAt(column: Int, row: Int) {
