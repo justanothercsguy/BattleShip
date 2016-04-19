@@ -19,6 +19,7 @@ class GameScene: SKScene {
     var myLabel: SKLabelNode!
     var cameraNode: SKCameraNode!
     var currentScale: CGFloat = CGFloat(0.80)
+    var cameraInitialPosition: CGPoint!
     
     override func didMoveToView(view: SKView) {
         // gamescene.sks messes up view, let's fix that
@@ -30,6 +31,7 @@ class GameScene: SKScene {
         cameraNode.position = CGPoint(x: scene!.size.width / 2, y: scene!.size.height / 2)
         scene!.addChild(cameraNode)
         scene!.camera = cameraNode
+        self.cameraInitialPosition = self.cameraNode.position
         
         // if observer, receive message on who won
         Client.sharedInstance.socket.on("someoneWon") {[weak self] data, ack in
@@ -133,6 +135,18 @@ class GameScene: SKScene {
             let touchedNode = self.getTouchedNode(touch.locationInView(self.view))
             let touchedTile = self.game_board.tileFromName(touchedNode?.name)
             
+            // move camera, zoom in and out
+            self.cameraNode.position = touch.locationInView(self.view)
+            if event?.allTouches()?.count == 2 {
+                self.currentScale *= CGFloat(0.80)
+                let zoomInAction: SKAction! = SKAction.scaleTo(self.currentScale, duration: 0.3)
+                self.cameraNode.runAction(zoomInAction)
+            } else if event?.allTouches()?.count == 3 {
+                self.currentScale *= CGFloat(1.25)
+                let zoomInAction: SKAction! = SKAction.scaleTo(self.currentScale, duration: 1)
+                self.cameraNode.runAction(zoomInAction)
+            }
+            
             if let tile = touchedTile {
                 Client.sharedInstance.socket.emitWithAck("playerTappedBoard", Client.sharedInstance.id, Client.sharedInstance.otherPlayerID, tile.column, tile.row)(timeoutAfter: 0, callback: {data in
                     // if server returns valid move, let us place the used sprite on that tile
@@ -143,16 +157,6 @@ class GameScene: SKScene {
                         print("invalid move")
                     }
                 })
-            } else {
-                 if event?.allTouches()?.count == 1 {
-                    self.currentScale *= CGFloat(0.80)
-                    let zoomInAction: SKAction! = SKAction.scaleTo(self.currentScale, duration: 1)
-                    self.cameraNode.runAction(zoomInAction)
-                 } else if event?.allTouches()?.count == 2 {
-                    self.currentScale *= CGFloat(1.25)
-                    let zoomInAction: SKAction! = SKAction.scaleTo(self.currentScale, duration: 1)
-                    self.cameraNode.runAction(zoomInAction)
-                }
             }
         }
     }
